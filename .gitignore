@@ -11,7 +11,24 @@ obj/
 
 # User-specific files
 *.rsuser
-*.suo
 *.user
 *.userosscache
 *.sln.docstates
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# IIS
+.vscode/
+*.dbmdl
+
+# Other
+Thumbs.db
+Desktop.ini
