@@ -169,3 +169,4 @@ D:\Repos\ConferenceRoomBooking\ConferenceRoomBooking\obj\Debug\net8.0\refint\Con
 D:\Repos\ConferenceRoomBooking\ConferenceRoomBooking\obj\Debug\net8.0\ConferenceRoomBooking.pdb
 D:\Repos\ConferenceRoomBooking\ConferenceRoomBooking\obj\Debug\net8.0\ConferenceRoomBooking.genruntimeconfig.cache
 D:\Repos\ConferenceRoomBooking\ConferenceRoomBooking\obj\Debug\net8.0\ref\ConferenceRoomBooking.dll
+D:\Repos\ConferenceRoomBooking\ConferenceRoomBooking\obj\Debug\net8.0\ConferenceRoomBooking.sourcelink.json
