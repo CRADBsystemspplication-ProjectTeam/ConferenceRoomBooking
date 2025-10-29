@@ -1,0 +1,40 @@
+using ConferenceRoomBooking.Data;
+using ConferenceRoomBooking.Interfaces.IRepositories;
+using ConferenceRoomBooking.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace ConferenceRoomBooking.Repositories
+{
+    public class BuildingRepository : BaseRepository<Building>, IBuildingRepository
+    {
+        public BuildingRepository(ConferenceRoomBookingDbContext context) : base(context) { }
+
+        public async Task<IEnumerable<Building>> GetBuildingsByLocationIdAsync(int locationId)
+        {
+            return await _context.Buildings
+                .Include(b => b.Location)
+                .Where(b => b.LocationId == locationId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Building>> SearchBuildingsAsync(string searchTerm)
+        {
+            return await _context.Buildings
+                .Include(b => b.Location)
+                .Where(b => b.Name.Contains(searchTerm) || b.Address.Contains(searchTerm))
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Building>> GetBuildingsSortedAsync(string sortBy, bool ascending)
+        {
+            var query = _context.Buildings.Include(b => b.Location).AsQueryable();
+            query = sortBy.ToLower() switch
+            {
+                "name" => ascending ? query.OrderBy(b => b.Name) : query.OrderByDescending(b => b.Name),
+                "location" => ascending ? query.OrderBy(b => b.Location.Name) : query.OrderByDescending(b => b.Location.Name),
+                _ => query.OrderBy(b => b.Name)
+            };
+            return await query.ToListAsync();
+        }
+    }
+}

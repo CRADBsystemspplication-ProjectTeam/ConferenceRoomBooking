@@ -6,7 +6,7 @@ namespace ConferenceRoomBooking.Models
     public class Desk
     {
         [Key]
-        public int DeskId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public int ResourceId { get; set; }
@@ -14,6 +14,11 @@ namespace ConferenceRoomBooking.Models
         [Required]
         [StringLength(100)]
         public string DeskName { get; set; }
+
+        public bool HasMonitor { get; set; } = false;
+        public bool HasKeyboard { get; set; } = false;
+        public bool HasMouse { get; set; } = false;
+        public bool HasDockingStation { get; set; } = false;
 
         public byte[]? DeskImage { get; set; }
 

@@ -26,6 +26,7 @@ namespace ConferenceRoomBooking.Data
         public DbSet<EventRSVP> EventRSVPs { get; set; }
         public DbSet<BroadcastNotification> BroadcastNotifications { get; set; }
         public DbSet<UserNotification> UserNotifications { get; set; }
+        public DbSet<UserBookingStats> UserBookingStats { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

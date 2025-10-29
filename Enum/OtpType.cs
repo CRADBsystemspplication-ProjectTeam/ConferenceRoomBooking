@@ -2,8 +2,7 @@
 {
     public enum OtpType
     {
-        PasswordReset,
+        ForgotPassword,
         EmailVerification
-
     }
 }

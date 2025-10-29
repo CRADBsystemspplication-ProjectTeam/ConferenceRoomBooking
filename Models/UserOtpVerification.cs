@@ -15,17 +15,20 @@ namespace ConferenceRoomBooking.Models
         [Required]
         [StringLength(6, MinimumLength = 4, ErrorMessage = "OTP must be 4-6 digits.")]
         [RegularExpression(@"^\d{4,6}$", ErrorMessage = "OTP must contain only digits.")]
-        public string Otp { get; set; }
+        public string OtpCode { get; set; }
 
         [Required]
         public OtpType Type { get; set; }
 
         [Required]
-        public DateTime ExpiryAt { get; set; }
+        public DateTime ExpiresAt { get; set; }
 
         public bool IsUsed { get; set; } = false;
 
-        public int Attempts { get; set; } = 0;
+        public int AttemptCount { get; set; } = 0;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UsedAt { get; set; }
 
         // Navigation property
         [ForeignKey("UserId")]

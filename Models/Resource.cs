@@ -9,7 +9,11 @@ namespace ConferenceRoomBooking.Models
     public class Resource
     {
         [Key]
-        public int ResourceId { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
 
         [Required]
         public ResourceType ResourceType { get; set; }
@@ -24,20 +28,16 @@ namespace ConferenceRoomBooking.Models
         public int FloorId { get; set; }
 
         public bool IsUnderMaintenance { get; set; } = false;
+        public bool IsBlocked { get; set; } = false;
 
-        public int? MinBookingDuration { get; set; } // in minutes
-
-        public int? MaxBookingDuration { get; set; } // in minutes
-
-        public bool IsActive { get; set; } = true;
         public DateTime? BlockedFrom { get; set; }
-
         public DateTime? BlockedUntil { get; set; }
 
         [MaxLength(500)]
         public string? BlockReason { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation Properties
         [ForeignKey("LocationId")]

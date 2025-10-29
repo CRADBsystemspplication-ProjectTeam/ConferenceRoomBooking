@@ -22,122 +22,7 @@ namespace ConferenceRoomBooking.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ConferenceRoomBooking.Models.BookingCheckIn", b =>
-                {
-                    b.Property<int>("CheckInId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CheckInId"));
-
-                    b.Property<TimeSpan?>("ActualDuration")
-                        .HasColumnType("time");
-
-                    b.Property<int>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("CheckInTime")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("CheckOutTime")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CheckInId");
-
-                    b.HasIndex("BookingId")
-                        .IsUnique();
-
-                    b.ToTable("BookingCheckIns");
-                });
-
-            modelBuilder.Entity("ConferenceRoomBooking.Models.BroadcastNotification", b =>
-                {
-                    b.Property<int>("NotificationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("LocationId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("NotificationSubject")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("NotificationType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("UserType")
-                        .HasColumnType("int");
-
-                    b.HasKey("NotificationId");
-
-                    b.HasIndex("CreatedAt");
-
-                    b.HasIndex("DepartmentId");
-
-                    b.HasIndex("LocationId");
-
-                    b.HasIndex("Status");
-
-                    b.ToTable("BroadcastNotifications");
-                });
-
-            modelBuilder.Entity("ConferenceRoomBooking.Models.Building", b =>
-                {
-                    b.Property<int>("BuildingId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BuildingId"));
-
-                    b.Property<string>("BuildingName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsActive")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LocationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("NoOfFloors")
-                        .HasColumnType("int");
-
-                    b.HasKey("BuildingId");
-
-                    b.HasIndex("LocationId");
-
-                    b.ToTable("Buildings");
-                });
-
-            modelBuilder.Entity("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Booking", b =>
+            modelBuilder.Entity("ConferenceRoomBooking.Models.Booking", b =>
                 {
                     b.Property<int>("BookingId")
                         .ValueGeneratedOnAdd()
@@ -209,6 +94,135 @@ namespace ConferenceRoomBooking.Migrations
                     b.ToTable("Bookings");
                 });
 
+            modelBuilder.Entity("ConferenceRoomBooking.Models.BookingCheckIn", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<TimeSpan?>("ActualDuration")
+                        .HasColumnType("time");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CheckInTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("CheckOutTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCheckedIn")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsCheckedOut")
+                        .HasColumnType("bit");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.ToTable("BookingCheckIns");
+                });
+
+            modelBuilder.Entity("ConferenceRoomBooking.Models.BroadcastNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<DateTime?>("SentAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TargetDepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TargetLocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CreatedAt");
+
+                    b.HasIndex("Status");
+
+                    b.HasIndex("TargetDepartmentId");
+
+                    b.HasIndex("TargetLocationId");
+
+                    b.ToTable("BroadcastNotifications");
+                });
+
+            modelBuilder.Entity("ConferenceRoomBooking.Models.Building", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<byte[]>("BuildingImage")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("LocationId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int?>("NumberOfFloors")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LocationId");
+
+                    b.ToTable("Buildings");
+                });
+
             modelBuilder.Entity("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Event", b =>
                 {
                     b.Property<int>("EventId")
@@ -236,7 +250,7 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<byte[]>("EventImage")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("EventTitle")
+                    b.Property<string>("EventName")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
@@ -295,11 +309,11 @@ namespace ConferenceRoomBooking.Migrations
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.Desk", b =>
                 {
-                    b.Property<int>("DeskId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DeskId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<byte[]>("DeskImage")
                         .HasColumnType("varbinary(max)");
@@ -309,10 +323,22 @@ namespace ConferenceRoomBooking.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<bool>("HasDockingStation")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasKeyboard")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasMonitor")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasMouse")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ResourceId")
                         .HasColumnType("int");
 
-                    b.HasKey("DeskId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ResourceId")
                         .IsUnique();
@@ -352,22 +378,28 @@ namespace ConferenceRoomBooking.Migrations
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.Floor", b =>
                 {
-                    b.Property<int>("FloorId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("FloorId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("BuildingId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FloorNumber")
+                    b.Property<string>("FloorName")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("FloorNumber")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("FloorPlanImage")
                         .HasColumnType("varbinary(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
@@ -378,7 +410,7 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<int?>("NumberOfRooms")
                         .HasColumnType("int");
 
-                    b.HasKey("FloorId");
+                    b.HasKey("Id");
 
                     b.HasIndex("BuildingId");
 
@@ -389,11 +421,11 @@ namespace ConferenceRoomBooking.Migrations
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.Location", b =>
                 {
-                    b.Property<int>("LocationId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LocationId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -410,13 +442,21 @@ namespace ConferenceRoomBooking.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<byte[]>("LocationImage")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<string>("PinCode")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("PostalCode")
                         .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
@@ -426,18 +466,21 @@ namespace ConferenceRoomBooking.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.HasKey("LocationId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.ToTable("Locations");
                 });
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.Resource", b =>
                 {
-                    b.Property<int>("ResourceId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResourceId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("BlockReason")
                         .HasMaxLength(500)
@@ -458,7 +501,7 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<int>("FloorId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsActive")
+                    b.Property<bool>("IsBlocked")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsUnderMaintenance")
@@ -467,16 +510,18 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("MaxBookingDuration")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("MinBookingDuration")
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("ResourceType")
                         .HasColumnType("int");
 
-                    b.HasKey("ResourceId");
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("BuildingId");
 
@@ -489,19 +534,31 @@ namespace ConferenceRoomBooking.Migrations
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.Room", b =>
                 {
-                    b.Property<int>("RoomId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RoomId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("Capacity")
                         .HasColumnType("int");
 
-                    b.Property<bool>("DigitalProjector")
+                    b.Property<bool>("HasAirConditioning")
                         .HasColumnType("bit");
 
-                    b.Property<bool>("HasAirConditioning")
+                    b.Property<bool>("HasProjector")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasTV")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasVideoConference")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasWhiteboard")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("HasWiFi")
                         .HasColumnType("bit");
 
                     b.Property<string>("PhoneExtension")
@@ -519,19 +576,7 @@ namespace ConferenceRoomBooking.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<bool>("TV")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("VideoConferenceEquipment")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Whiteboard")
-                        .HasColumnType("bit");
-
-                    b.Property<bool>("Wifi")
-                        .HasColumnType("bit");
-
-                    b.HasKey("RoomId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ResourceId")
                         .IsUnique();
@@ -623,13 +668,44 @@ namespace ConferenceRoomBooking.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("ConferenceRoomBooking.Models.UserNotification", b =>
+            modelBuilder.Entity("ConferenceRoomBooking.Models.UserBookingStats", b =>
                 {
-                    b.Property<int>("NotificationId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("NotificationId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CancelledBookings")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CompletedBookings")
+                        .HasColumnType("int");
+
+                    b.Property<int>("NoShowBookings")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TotalBookings")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("UserBookingStats");
+                });
+
+            modelBuilder.Entity("ConferenceRoomBooking.Models.UserNotification", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("BookingId")
                         .HasColumnType("int");
@@ -640,21 +716,19 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<int?>("DepartmentId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(2000)
-                        .HasColumnType("nvarchar(2000)");
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
                     b.Property<int?>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("NotificationSubject")
+                    b.Property<string>("Message")
                         .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
 
-                    b.Property<int>("NotificationType")
-                        .HasColumnType("int");
+                    b.Property<DateTime?>("ReadAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("SentAt")
                         .HasColumnType("datetime2");
@@ -662,10 +736,18 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("NotificationId");
+                    b.HasKey("Id");
 
                     b.HasIndex("BookingId");
 
@@ -690,22 +772,28 @@ namespace ConferenceRoomBooking.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Attempts")
+                    b.Property<int>("AttemptCount")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ExpiryAt")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("IsUsed")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Otp")
+                    b.Property<string>("OtpCode")
                         .IsRequired()
                         .HasMaxLength(6)
                         .HasColumnType("nvarchar(6)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
+
+                    b.Property<DateTime?>("UsedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
@@ -717,44 +805,7 @@ namespace ConferenceRoomBooking.Migrations
                     b.ToTable("UserOtpVerifications");
                 });
 
-            modelBuilder.Entity("ConferenceRoomBooking.Models.BookingCheckIn", b =>
-                {
-                    b.HasOne("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Booking", "Booking")
-                        .WithOne("CheckIn")
-                        .HasForeignKey("ConferenceRoomBooking.Models.BookingCheckIn", "BookingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("ConferenceRoomBooking.Models.BroadcastNotification", b =>
-                {
-                    b.HasOne("ConferenceRoomBooking.Models.Department", "Department")
-                        .WithMany()
-                        .HasForeignKey("DepartmentId");
-
-                    b.HasOne("ConferenceRoomBooking.Models.Location", "Location")
-                        .WithMany()
-                        .HasForeignKey("LocationId");
-
-                    b.Navigation("Department");
-
-                    b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("ConferenceRoomBooking.Models.Building", b =>
-                {
-                    b.HasOne("ConferenceRoomBooking.Models.Location", "Location")
-                        .WithMany("Buildings")
-                        .HasForeignKey("LocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Location");
-                });
-
-            modelBuilder.Entity("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Booking", b =>
+            modelBuilder.Entity("ConferenceRoomBooking.Models.Booking", b =>
                 {
                     b.HasOne("ConferenceRoomBooking.Models.Resource", "Resource")
                         .WithMany("Bookings")
@@ -771,6 +822,43 @@ namespace ConferenceRoomBooking.Migrations
                     b.Navigation("Resource");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ConferenceRoomBooking.Models.BookingCheckIn", b =>
+                {
+                    b.HasOne("ConferenceRoomBooking.Models.Booking", "Booking")
+                        .WithOne("CheckIn")
+                        .HasForeignKey("ConferenceRoomBooking.Models.BookingCheckIn", "BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+                });
+
+            modelBuilder.Entity("ConferenceRoomBooking.Models.BroadcastNotification", b =>
+                {
+                    b.HasOne("ConferenceRoomBooking.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("TargetDepartmentId");
+
+                    b.HasOne("ConferenceRoomBooking.Models.Location", "Location")
+                        .WithMany()
+                        .HasForeignKey("TargetLocationId");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Location");
+                });
+
+            modelBuilder.Entity("ConferenceRoomBooking.Models.Building", b =>
+                {
+                    b.HasOne("ConferenceRoomBooking.Models.Location", "Location")
+                        .WithMany("Buildings")
+                        .HasForeignKey("LocationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Location");
                 });
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Event", b =>
@@ -891,9 +979,20 @@ namespace ConferenceRoomBooking.Migrations
                     b.Navigation("Location");
                 });
 
+            modelBuilder.Entity("ConferenceRoomBooking.Models.UserBookingStats", b =>
+                {
+                    b.HasOne("ConferenceRoomBooking.Models.User", "User")
+                        .WithOne("BookingStats")
+                        .HasForeignKey("ConferenceRoomBooking.Models.UserBookingStats", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("ConferenceRoomBooking.Models.UserNotification", b =>
                 {
-                    b.HasOne("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Booking", "Booking")
+                    b.HasOne("ConferenceRoomBooking.Models.Booking", "Booking")
                         .WithMany("Notifications")
                         .HasForeignKey("BookingId");
 
@@ -931,18 +1030,18 @@ namespace ConferenceRoomBooking.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("ConferenceRoomBooking.Models.Booking", b =>
+                {
+                    b.Navigation("CheckIn");
+
+                    b.Navigation("Notifications");
+                });
+
             modelBuilder.Entity("ConferenceRoomBooking.Models.Building", b =>
                 {
                     b.Navigation("Floors");
 
                     b.Navigation("Resources");
-                });
-
-            modelBuilder.Entity("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Booking", b =>
-                {
-                    b.Navigation("CheckIn");
-
-                    b.Navigation("Notifications");
                 });
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models.Event", b =>
@@ -982,6 +1081,9 @@ namespace ConferenceRoomBooking.Migrations
 
             modelBuilder.Entity("ConferenceRoomBooking.Models.User", b =>
                 {
+                    b.Navigation("BookingStats")
+                        .IsRequired();
+
                     b.Navigation("Bookings");
 
                     b.Navigation("Notifications");

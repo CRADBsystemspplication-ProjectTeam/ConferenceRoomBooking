@@ -15,11 +15,11 @@ namespace ConferenceRoomBooking.DTOs.Room
         [Range(1, 1000)]
         public int Capacity { get; set; }
 
-        public bool TV { get; set; } = false;
-        public bool Whiteboard { get; set; } = false;
-        public bool Wifi { get; set; } = false;
-        public bool DigitalProjector { get; set; } = false;
-        public bool VideoConferenceEquipment { get; set; } = false;
+        public bool HasTV { get; set; } = false;
+        public bool HasWhiteboard { get; set; } = false;
+        public bool HasWiFi { get; set; } = false;
+        public bool HasProjector { get; set; } = false;
+        public bool HasVideoConference { get; set; } = false;
         public bool HasAirConditioning { get; set; } = false;
 
         [StringLength(20)]

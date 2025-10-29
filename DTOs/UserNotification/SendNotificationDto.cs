@@ -1,13 +1,24 @@
-﻿using ConferenceRoomBooking.Enum;
+using ConferenceRoomBooking.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConferenceRoomBooking.DTOs.UserNotification
 {
     public class SendNotificationDto
     {
+        [Required]
         public int UserId { get; set; }
+
+        [Required]
+        [StringLength(200)]
+        public string Title { get; set; } = string.Empty;
+
+        [Required]
+        [StringLength(2000)]
+        public string Message { get; set; } = string.Empty;
+
+        [Required]
+        public NotificationType Type { get; set; }
+
         public int? BookingId { get; set; }
-        public NotificationType NotificationType { get; set; }
-        public string NotificationSubject { get; set; }
-        public string Description { get; set; }
     }
 }

@@ -4,6 +4,10 @@ namespace ConferenceRoomBooking.DTOs.Resource
 {
     public class UpdateResourceDto
     {
+        public string? Name { get; set; }
+        public int? LocationId { get; set; }
+        public int? BuildingId { get; set; }
+        public int? FloorId { get; set; }
         public bool? IsUnderMaintenance { get; set; }
 
         [Range(15, 1440)]

@@ -11,5 +11,10 @@ namespace ConferenceRoomBooking.Interfaces.IServices
         Task<BroadcastNotification> GetBroadcastByIdAsync(int id);
         Task<IEnumerable<BroadcastNotification>> GetAllBroadcastsAsync();
         Task ProcessPendingBroadcastsAsync();
+
+        // Additional methods matching repository filtering capabilities
+        Task<IEnumerable<BroadcastNotification>> GetByDateRangeAsync(DateTime from, DateTime to);
+        Task<IEnumerable<BroadcastNotification>> GetByDepartmentIdAsync(int departmentId);
+        Task<IEnumerable<BroadcastNotification>> GetByLocationIdAsync(int locationId);
     }
 }

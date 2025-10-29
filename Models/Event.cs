@@ -12,7 +12,7 @@
 
             [Required]
             [StringLength(200)]
-            public string EventTitle { get; set; }
+            public string EventName { get; set; }
 
             [StringLength(2000)]
             public string? Description { get; set; }

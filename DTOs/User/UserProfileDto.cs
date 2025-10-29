@@ -4,35 +4,20 @@ namespace ConferenceRoomBooking.DTOs.User
 {
     public class UserProfileDto
     {
-        public byte[]? ProfileImage { get; set; }
-
-        [Required]
-        [StringLength(50)]
+        public int Id { get; set; }
         public string EmployeeId { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(50)]
         public string FirstName { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(50)]
         public string LastName { get; set; } = string.Empty;
-
-        public int? LocationId { get; set; }
-
-        public int? DepartmentId { get; set; }
-
-        [StringLength(100)]
-        public string? Title { get; set; }
-
-        [Required]
-        [StringLength(100)]
-        [EmailAddress]
-        public string EmailAddress { get; set; } = string.Empty;
-
-        [Required]
-        [StringLength(10)]
+        public string Email { get; set; } = string.Empty;
         public string PhoneNumber { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public int? LocationId { get; set; }
+        public int? DepartmentId { get; set; }
+        public string? Title { get; set; }
+        public bool IsActive { get; set; }
+        public byte[]? ProfileImage { get; set; }
+        public DateTime? LastLoginAt { get; set; }
+        public DateTime CreatedAt { get; set; }
     }
 
 }

@@ -5,29 +5,49 @@ namespace ConferenceRoomBooking.DTOs.Booking
     public class BookingResponseDto
     {
         public int BookingId { get; set; }
+
+        public int Id { get; set; }
+
         public int UserId { get; set; }
-        public string UserName { get; set; } = string.Empty;
-        public string UserEmail { get; set; } = string.Empty;
+
+        public string? UserName { get; set; }
 
         public int ResourceId { get; set; }
-        public string ResourceName { get; set; } = string.Empty;
-        public string ResourceType { get; set; } = string.Empty;
-        public string? LocationName { get; set; }
+
+        public string? ResourceName { get; set; }
+
+        public ResourceType ResourceType { get; set; }
 
         public DateTime Date { get; set; }
+
+        public DateTime BookingDate { get; set; }
+
         public TimeSpan StartTime { get; set; }
+
         public TimeSpan EndTime { get; set; }
-        public string? Purpose { get; set; }
 
         public SessionStatus Status { get; set; }
-        public string StatusDisplay { get; set; } = string.Empty;
+
+        public SessionStatus SessionStatus { get; set; }
+
+        public string? MeetingName { get; set; }
+
+        public string? Purpose { get; set; }
+
+        public int? ParticipantCount { get; set; }
+
+        public string? LocationName { get; set; }
+
+        public string? BuildingName { get; set; }
+
+        public string? FloorName { get; set; }
 
         public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public string? CancellationReason { get; set; }
 
-        public bool IsCheckedIn { get; set; }
-        public DateTime? CheckInTime { get; set; }
-        public DateTime? CheckOutTime { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        public DateTime? CancelledAt { get; set; }
+
+        public string? CancellationReason { get; set; }
     }
 }

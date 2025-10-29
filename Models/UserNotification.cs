@@ -9,7 +9,7 @@ namespace ConferenceRoomBooking.Models
     {
 
         [Key]
-        public int NotificationId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public int UserId { get; set; }
@@ -17,15 +17,18 @@ namespace ConferenceRoomBooking.Models
         public int? BookingId { get; set; }
 
         [Required]
-        public NotificationType NotificationType { get; set; }
+        public NotificationType Type { get; set; }
 
         [Required]
         [StringLength(200)]
-        public string NotificationSubject { get; set; }
+        public string Title { get; set; }
 
         [Required]
         [StringLength(2000)]
-        public string Description { get; set; }
+        public string Message { get; set; }
+
+        public bool IsRead { get; set; } = false;
+        public DateTime? ReadAt { get; set; }
 
         [Required]
         public EmailStatus Status { get; set; } = EmailStatus.Pending;

@@ -28,9 +28,10 @@ namespace ConferenceRoomBooking.DTOs.User
         public string? Title { get; set; }
 
         [Required]
-        [StringLength(100)]
         [EmailAddress]
-        public string EmailAddress { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+
+        public string Role { get; set; } = string.Empty;
 
         [Required]
         [StringLength(10, MinimumLength = 10)]

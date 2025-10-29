@@ -6,7 +6,7 @@ namespace ConferenceRoomBooking.Models
     public class Room
     {
         [Key]
-        public int RoomId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public int ResourceId { get; set; }
@@ -17,15 +17,15 @@ namespace ConferenceRoomBooking.Models
 
         public int Capacity { get; set; }
 
-        public bool TV { get; set; } = false;
+        public bool HasTV { get; set; } = false;
 
-        public bool Whiteboard { get; set; } = false;
+        public bool HasWhiteboard { get; set; } = false;
 
-        public bool Wifi { get; set; } = false;
+        public bool HasWiFi { get; set; } = false;
 
-        public bool DigitalProjector { get; set; } = false;
+        public bool HasProjector { get; set; } = false;
 
-        public bool VideoConferenceEquipment { get; set; } = false;
+        public bool HasVideoConference { get; set; } = false;
 
         public bool HasAirConditioning { get; set; } = false;
 

@@ -7,5 +7,9 @@ namespace ConferenceRoomBooking.Interfaces.IRepositories
     {
         Task<IEnumerable<BroadcastNotification>> GetPendingBroadcastsAsync();
         Task<IEnumerable<BroadcastNotification>> GetByStatusAsync(EmailStatus status);
+        Task<IEnumerable<BroadcastNotification>> GetByDateRangeAsync(DateTime from, DateTime to);
+        Task<IEnumerable<BroadcastNotification>> GetByDepartmentIdAsync(int departmentId);
+        Task<IEnumerable<BroadcastNotification>> GetByLocationIdAsync(int locationId);
+
     }
 }

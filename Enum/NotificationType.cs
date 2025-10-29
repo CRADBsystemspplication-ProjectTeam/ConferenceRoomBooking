@@ -12,7 +12,8 @@
         NoCheckInReminder,
         NoCheckOutReminder,
         EmployeeRegistration,
-        MaintenanceAlert
+        MaintenanceAlert,
+        Welcome
     }
 
 }

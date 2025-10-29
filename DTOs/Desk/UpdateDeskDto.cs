@@ -1,12 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace ConferenceRoomBooking.DTOs.Desk
+﻿namespace ConferenceRoomBooking.DTOs.Desk
 {
     public class UpdateDeskDto
     {
-        [StringLength(100)]
         public string? DeskName { get; set; }
 
-        public byte[]? DeskImage { get; set; }
+        public bool? HasMonitor { get; set; }
+
+        public bool? HasKeyboard { get; set; }
+
+        public bool? HasMouse { get; set; }
+
+        public bool? HasDockingStation { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ConferenceRoomBooking.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConferenceRoomBooking.DTOs.Resource
 {

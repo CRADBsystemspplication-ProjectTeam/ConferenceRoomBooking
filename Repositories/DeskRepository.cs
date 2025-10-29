@@ -1,0 +1,74 @@
+using ConferenceRoomBooking.Data;
+using ConferenceRoomBooking.Enum;
+using ConferenceRoomBooking.Interfaces.IRepositories;
+using ConferenceRoomBooking.Models;
+using Microsoft.EntityFrameworkCore;
+
+namespace ConferenceRoomBooking.Repositories
+{
+    public class DeskRepository : BaseRepository<Desk>, IDeskRepository
+    {
+        public DeskRepository(ConferenceRoomBookingDbContext context) : base(context) { }
+
+        public async Task<Desk?> GetDeskByResourceIdAsync(int resourceId)
+        {
+            return await _context.Desks
+                .Include(d => d.Resource)
+                .ThenInclude(r => r.Location)
+                .Include(d => d.Resource)
+                .ThenInclude(r => r.Building)
+                .Include(d => d.Resource)
+                .ThenInclude(r => r.Floor)
+                .FirstOrDefaultAsync(d => d.ResourceId == resourceId);
+        }
+
+        public async Task<IEnumerable<Desk>> GetDesksByLocationAsync(int locationId)
+        {
+            return await _context.Desks
+                .Include(d => d.Resource)
+                .Where(d => d.Resource.LocationId == locationId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Desk>> GetDesksByBuildingAsync(int buildingId)
+        {
+            return await _context.Desks
+                .Include(d => d.Resource)
+                .Where(d => d.Resource.BuildingId == buildingId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Desk>> GetDesksByFloorAsync(int floorId)
+        {
+            return await _context.Desks
+                .Include(d => d.Resource)
+                .Where(d => d.Resource.FloorId == floorId)
+                .ToListAsync();
+        }
+
+        public async Task<IEnumerable<Desk>> GetAvailableDesksAsync(int locationId, DateTime date, TimeSpan startTime, TimeSpan endTime)
+        {
+            var bookedResourceIds = await _context.Bookings
+                .Where(b => b.Date.Date == date.Date &&
+                           b.SessionStatus != SessionStatus.Cancelled &&
+                           b.StartTime < endTime && b.EndTime > startTime)
+                .Select(b => b.ResourceId)
+                .ToListAsync();
+
+            return await _context.Desks
+                .Include(d => d.Resource)
+                .Where(d => d.Resource.LocationId == locationId &&
+                           d.Resource.ResourceType == ResourceType.Desk &&
+                           !d.Resource.IsUnderMaintenance &&
+                           !d.Resource.IsBlocked &&
+                           !bookedResourceIds.Contains(d.ResourceId))
+                .ToListAsync();
+        }
+
+        public async Task<bool> DeskExistsAsync(string deskName, int resourceId)
+        {
+            return await _context.Desks
+                .AnyAsync(d => d.DeskName == deskName && d.ResourceId != resourceId);
+        }
+    }
+}

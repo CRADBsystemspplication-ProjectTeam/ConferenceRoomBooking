@@ -5,7 +5,11 @@ namespace ConferenceRoomBooking.Models
     public class Location
     {
         [Key]
-        public int LocationId { get; set; }
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(100)]
+        public string Name { get; set; }
 
         [Required]
         [StringLength(200)]
@@ -21,7 +25,7 @@ namespace ConferenceRoomBooking.Models
 
         [Required]
         [StringLength(10)]
-        public string PinCode { get; set; }
+        public string PostalCode { get; set; }
 
         [Required]
         [StringLength(100)]
@@ -30,6 +34,9 @@ namespace ConferenceRoomBooking.Models
         public byte[]? LocationImage { get; set; }
 
         public bool IsActive { get; set; } = true;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
         // Navigation Properties
         public ICollection<Building> Buildings { get; set; } = new List<Building>();

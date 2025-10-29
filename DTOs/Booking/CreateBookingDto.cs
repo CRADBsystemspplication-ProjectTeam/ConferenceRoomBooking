@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ConferenceRoomBooking.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConferenceRoomBooking.DTOs.Booking
 {
@@ -18,6 +19,15 @@ namespace ConferenceRoomBooking.DTOs.Booking
 
         [Required]
         public TimeSpan EndTime { get; set; }
+
+        [Required]
+        public ResourceType ResourceType { get; set; }
+
+        [Required]
+        public string MeetingName { get; set; }
+
+        [Required]
+        public int ParticipantCount { get; set; }
 
         [MaxLength(500)]
         public string? Purpose { get; set; }

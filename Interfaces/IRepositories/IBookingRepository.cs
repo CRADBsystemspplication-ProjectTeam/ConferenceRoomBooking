@@ -1,5 +1,5 @@
 ﻿using ConferenceRoomBooking.Enum;
-using ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models;
+using ConferenceRoomBooking.Models;
 
 namespace ConferenceRoomBooking.Interfaces.IRepositories
 {

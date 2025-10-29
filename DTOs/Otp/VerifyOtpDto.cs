@@ -4,8 +4,8 @@ namespace ConferenceRoomBooking.DTOs.Otp
 {
     public class VerifyOtpDto
     {
-        public int UserId { get; set; }
-        public string Otp { get; set; }
+        public string Email { get; set; } = string.Empty;
+        public string Otp { get; set; } = string.Empty;
         public OtpType Type { get; set; }
     }
 }

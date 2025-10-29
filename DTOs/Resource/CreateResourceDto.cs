@@ -1,9 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ConferenceRoomBooking.Enum;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConferenceRoomBooking.DTOs.Resource
 {
     public class CreateResourceDto
     {
+        [Required]
+        public string Name { get; set; }
+
         [Required]
         public ResourceType ResourceType { get; set; }
 

@@ -27,19 +27,17 @@ namespace ConferenceRoomBooking.DTOs.User
         [StringLength(100)]
         public string? Title { get; set; }
 
-        [Required(ErrorMessage = "Email is required")]
-        [StringLength(100)]
+        [Required]
         [EmailAddress]
-        public string EmailAddress { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(10, MinimumLength = 10)]
-        [RegularExpression(@"^[6-9]\d{9}$", ErrorMessage = "Phone number must be 10 digits and start with 6,7,8, or 9.")]
         public string PhoneNumber { get; set; } = string.Empty;
 
         [Required]
-        [StringLength(100, MinimumLength = 6)]
-        public string AddPassword { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+
+        public string Role { get; set; } = "User";
 
         [Required]
         [Compare("AddPassword", ErrorMessage = "Passwords do not match.")]

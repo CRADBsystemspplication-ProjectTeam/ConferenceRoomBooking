@@ -6,7 +6,7 @@ namespace ConferenceRoomBooking.Models
     public class Floor
     {
         [Key]
-        public int FloorId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         public int LocationId { get; set; }
@@ -15,14 +15,19 @@ namespace ConferenceRoomBooking.Models
         public int BuildingId { get; set; }
 
         [Required]
-        [StringLength(10)]
-        public string FloorNumber { get; set; }
+        [StringLength(100)]
+        public string FloorName { get; set; }
+
+        [Required]
+        public int FloorNumber { get; set; }
 
         public int? NumberOfRooms { get; set; }
 
         public int? NumberOfDesks { get; set; }
 
         public byte[]? FloorPlanImage { get; set; }
+
+        public bool IsActive { get; set; } = true;  // ADD THIS
 
         // Navigation Properties
         [ForeignKey("LocationId")]
@@ -33,5 +38,4 @@ namespace ConferenceRoomBooking.Models
 
         public ICollection<Resource> Resources { get; set; } = new List<Resource>();
     }
-
 }
