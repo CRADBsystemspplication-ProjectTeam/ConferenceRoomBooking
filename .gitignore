@@ -25,10 +25,12 @@ obj/
 .nuget/
 packages/
 
-# IIS
+# VS Code
 .vscode/
+
+# IIS / SQL / Other
 *.dbmdl
 
-# Other
+# OS generated files
 Thumbs.db
 Desktop.ini
