@@ -38,6 +38,15 @@ namespace ConferenceRoomBooking.Data
                 entity.HasIndex(e => e.EmployeeId).IsUnique();
             });
 
+            modelBuilder.Entity<UserBookingStats>(entity =>
+            {
+                entity.HasOne(s => s.User)
+                    .WithOne(u => u.BookingStats)
+                    .HasForeignKey<UserBookingStats>(s => s.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasIndex(s => s.UserId).IsUnique();
+            });
             // OTP
             modelBuilder.Entity<UserOtpVerification>(entity =>
             {

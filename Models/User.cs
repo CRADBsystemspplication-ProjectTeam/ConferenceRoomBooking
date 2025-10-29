@@ -67,6 +67,8 @@ namespace ConferenceRoomBooking.Models
         [ForeignKey("DepartmentId")]
         public Department? Department { get; set; }
 
+        public UserBookingStats BookingStats { get; set; } = null!;
+
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
         public ICollection<UserNotification> Notifications { get; set; } = new List<UserNotification>();
         public ICollection<UserOtpVerification> OtpVerifications { get; set; } = new List<UserOtpVerification>();
