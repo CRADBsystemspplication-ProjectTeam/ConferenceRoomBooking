@@ -1,4 +1,4 @@
-﻿# Build results
+# Build results
 bin/
 obj/
 
@@ -8,3 +8,29 @@ obj/
 *.suo
 *.userosscache
 *.sln.docstates
+
+# User-specific files
+*.rsuser
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# NuGet
+*.nupkg
+*.snupkg
+.nuget/
+packages/
+
+# VS Code
+.vscode/
+
+# IIS / SQL / Other
+*.dbmdl
+
+# OS generated files
+Thumbs.db
+Desktop.ini
