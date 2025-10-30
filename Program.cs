@@ -32,7 +32,7 @@ builder.Services.AddAuthorization();
 builder.Services.AddApplicationServices(builder.Configuration);
 
 // Add data seeder
-builder.Services.AddScoped<DataSeeder>();
+//builder.Services.AddScoped<DataSeeder>();
 
 // Configure Swagger with JWT Authentication
 builder.Services.AddEndpointsApiExplorer();
@@ -75,11 +75,11 @@ builder.Services.AddSwaggerGen(options =>
 var app = builder.Build();
 
 // Seed admin data
-using (var scope = app.Services.CreateScope())
-{
-    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
-    await seeder.SeedAdminAsync();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+//    await seeder.SeedAdminAsync();
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

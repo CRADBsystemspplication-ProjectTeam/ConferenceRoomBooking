@@ -40,7 +40,7 @@ namespace ConferenceRoomBooking.DTOs.User
         public string Role { get; set; } = "User";
 
         [Required]
-        [Compare("AddPassword", ErrorMessage = "Passwords do not match.")]
+        [Compare("Password", ErrorMessage = "Passwords do not match.")]
         public string ConfirmPassword { get; set; } = string.Empty;
     }
 

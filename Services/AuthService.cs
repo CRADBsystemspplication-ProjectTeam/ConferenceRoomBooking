@@ -104,7 +104,7 @@ namespace ConferenceRoomBooking.Services
                 UserId = user.Id,
                 OtpCode = otp,
                 Type = type,
-                ExpiresAt = DateTime.UtcNow.AddMinutes(10),
+                ExpiresAt = DateTime.UtcNow.AddMinutes(2880),
                 CreatedAt = DateTime.UtcNow
             };
 
