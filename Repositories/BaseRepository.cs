@@ -22,12 +22,12 @@ namespace ConferenceRoomBooking.Repositories
             return entity;
         }
 
-        public async Task<T?> GetByIdAsync(int id)
+        public async virtual Task<T?> GetByIdAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }
 
-        public async Task<IEnumerable<T>> GetAllAsync()
+        public async virtual Task<IEnumerable<T>> GetAllAsync()
         {
             return await _context.Set<T>().ToListAsync();
         }

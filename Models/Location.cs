@@ -5,7 +5,7 @@ namespace ConferenceRoomBooking.Models
     public class Location
     {
         [Key]
-        public int Id { get; set; }
+        public int LocationId { get; set; }
 
         [Required]
         [StringLength(100)]

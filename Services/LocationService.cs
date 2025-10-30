@@ -87,7 +87,7 @@ namespace ConferenceRoomBooking.Services
         {
             return new LocationResponseDto
             {
-                Id = location.Id,
+                LocationId = location.LocationId,
                 Name = location.Name,
                 Address = location.Address,
                 City = location.City,

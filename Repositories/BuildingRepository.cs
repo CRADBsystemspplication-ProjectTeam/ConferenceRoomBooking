@@ -9,6 +9,21 @@ namespace ConferenceRoomBooking.Repositories
     {
         public BuildingRepository(ConferenceRoomBookingDbContext context) : base(context) { }
 
+        public override async Task<Building?> GetByIdAsync(int id)
+        {
+            return await _context.Buildings
+                .Include(b => b.Location)
+                .FirstOrDefaultAsync(b => b.Id == id);
+        }
+
+        // Override to include navigation properties
+        public override async Task<IEnumerable<Building>> GetAllAsync()
+        {
+            return await _context.Buildings
+                .Include(b => b.Location)
+                .OrderBy(b => b.Name)
+                .ToListAsync();
+        }
         public async Task<IEnumerable<Building>> GetBuildingsByLocationIdAsync(int locationId)
         {
             return await _context.Buildings
