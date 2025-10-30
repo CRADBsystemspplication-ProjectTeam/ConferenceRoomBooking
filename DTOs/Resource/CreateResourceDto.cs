@@ -22,11 +22,6 @@ namespace ConferenceRoomBooking.DTOs.Resource
 
         public bool IsUnderMaintenance { get; set; } = false;
 
-        [Range(15, 1440)]
-        public int? MinBookingDuration { get; set; }
-
-        [Range(15, 1440)]
-        public int? MaxBookingDuration { get; set; }
 
         public bool IsActive { get; set; } = true;
 

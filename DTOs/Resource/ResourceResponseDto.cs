@@ -13,8 +13,7 @@ namespace ConferenceRoomBooking.DTOs.Resource
         public int FloorId { get; set; }
         public bool IsUnderMaintenance { get; set; }
         public bool IsBlocked { get; set; }
-        public int? MinBookingDuration { get; set; }
-        public int? MaxBookingDuration { get; set; }
+        
         public bool IsActive { get; set; }
         public DateTime? BlockedFrom { get; set; }
         public DateTime? BlockedUntil { get; set; }

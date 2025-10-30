@@ -10,6 +10,26 @@ namespace ConferenceRoomBooking.Repositories
     {
         public ResourceRepository(ConferenceRoomBookingDbContext context) : base(context) { }
 
+        public override async Task<Resource?> GetByIdAsync(int id)
+        {
+            return await _context.Resources
+                .Include(r => r.Location)
+                .Include(r => r.Building)
+                .Include(r => r.Floor)
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
+
+        // Override to include navigation properties
+        public override async Task<IEnumerable<Resource>> GetAllAsync()
+        {
+            return await _context.Resources
+                .Include(r => r.Location)
+                .Include(r => r.Building)
+                .Include(r => r.Floor)
+                .OrderBy(r => r.Name)
+                .ToListAsync();
+        }
+
         public async Task<IEnumerable<Resource>> GetResourcesByTypeAsync(ResourceType resourceType)
         {
             return await _context.Resources
