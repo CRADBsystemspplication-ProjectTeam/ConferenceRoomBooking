@@ -168,6 +168,7 @@ Conference Room Booking Team";
                 LocationId = user.LocationId,
                 DepartmentId = user.DepartmentId,
                 Title = user.Title,
+                Role=user.Role,
                 IsActive = user.IsActive,
                 ProfileImage = user.ProfileImage,
                 LastLoginAt = user.LastLoginAt,

@@ -42,6 +42,8 @@ namespace ConferenceRoomBooking.Services
             services.AddScoped<IBuildingService, BuildingService>();
             services.AddScoped<IFloorService, FloorService>();
             services.AddScoped<IResourceService, ResourceService>();
+            services.AddScoped<IRoomService, RoomService>();           // ADD THIS
+            services.AddScoped<IDeskService, DeskService>();           // ADD THIS
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IOtpService, OtpService>();
             services.AddScoped<IUserNotificationService, UserNotificationService>();

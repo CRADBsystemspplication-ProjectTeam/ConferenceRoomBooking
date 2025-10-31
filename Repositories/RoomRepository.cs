@@ -10,15 +10,42 @@ namespace ConferenceRoomBooking.Repositories
     {
         public RoomRepository(ConferenceRoomBookingDbContext context) : base(context) { }
 
+        // Override to include navigation properties
+        public override async Task<Room?> GetByIdAsync(int id)
+        {
+            return await _context.Rooms
+                .Include(r => r.Resource)
+                    .ThenInclude(res => res.Location)
+                .Include(r => r.Resource)
+                    .ThenInclude(res => res.Building)
+                .Include(r => r.Resource)
+                    .ThenInclude(res => res.Floor)
+                .FirstOrDefaultAsync(r => r.Id == id);
+        }
+
+        // Override to include navigation properties
+        public override async Task<IEnumerable<Room>> GetAllAsync()
+        {
+            return await _context.Rooms
+                .Include(r => r.Resource)
+                    .ThenInclude(res => res.Location)
+                .Include(r => r.Resource)
+                    .ThenInclude(res => res.Building)
+                .Include(r => r.Resource)
+                    .ThenInclude(res => res.Floor)
+                .OrderBy(r => r.RoomName)
+                .ToListAsync();
+        }
+
         public async Task<Room?> GetRoomByResourceIdAsync(int resourceId)
         {
             return await _context.Rooms
                 .Include(r => r.Resource)
-                .ThenInclude(r => r.Location)
+                    .ThenInclude(res => res.Location)
                 .Include(r => r.Resource)
-                .ThenInclude(r => r.Building)
+                    .ThenInclude(res => res.Building)
                 .Include(r => r.Resource)
-                .ThenInclude(r => r.Floor)
+                    .ThenInclude(res => res.Floor)
                 .FirstOrDefaultAsync(r => r.ResourceId == resourceId);
         }
 

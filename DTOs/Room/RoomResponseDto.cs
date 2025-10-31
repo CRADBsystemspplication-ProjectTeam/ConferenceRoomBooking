@@ -21,7 +21,7 @@
         public int BuildingId { get; set; }
         public int FloorId { get; set; }
         public bool IsUnderMaintenance { get; set; }
-        public bool IsActive { get; set; }
+    
         public bool IsBlocked { get; set; }
         public DateTime? BlockedFrom { get; set; }
         public DateTime? BlockedUntil { get; set; }

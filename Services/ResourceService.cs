@@ -163,6 +163,10 @@ namespace ConferenceRoomBooking.Services
                 Name = resource.Name,
                 ResourceType = resource.ResourceType,
                 LocationId = resource.LocationId,
+                LocationAddress = resource.Location?.Address,  // Add this
+                City = resource.Location?.City,                // Add this
+                State = resource.Location?.State,              // Add this
+                Country = resource.Location?.Country,
                 LocationName = resource.Location?.Name,
                 BuildingId = resource.BuildingId,
                 BuildingName = resource.Building?.Name,

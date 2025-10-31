@@ -142,13 +142,16 @@ namespace ConferenceRoomBooking.Services
             return true;
         }
 
+       
         private async Task<RoomResponseDto> MapToResponseDto(Room room)
         {
-            var resource = await _resourceRepository.GetResourceWithDetailsAsync(room.ResourceId);
+            // If Resource is not loaded, fetch it
+            var resource = room.Resource ?? await _resourceRepository.GetResourceWithDetailsAsync(room.ResourceId);
 
             return new RoomResponseDto
             {
                 Id = room.Id,
+                RoomId = room.Id, // Map this to Id instead of 0
                 ResourceId = room.ResourceId,
                 RoomName = room.RoomName,
                 Capacity = room.Capacity,
@@ -158,11 +161,26 @@ namespace ConferenceRoomBooking.Services
                 HasProjector = room.HasProjector,
                 HasVideoConference = room.HasVideoConference,
                 HasAirConditioning = room.HasAirConditioning,
-                LocationName = resource?.Location?.Name,
-                BuildingName = resource?.Building?.Name,
-                FloorName = resource?.Floor?.FloorName,
+                PhoneExtension = room.PhoneExtension,
+                RoomImage = room.RoomImage,
+
+                // Resource Information
+                LocationId = resource?.LocationId ?? 0,
+                BuildingId = resource?.BuildingId ?? 0,
+                FloorId = resource?.FloorId ?? 0,
                 IsUnderMaintenance = resource?.IsUnderMaintenance ?? false,
-                IsBlocked = resource?.IsBlocked ?? false
+     
+                IsBlocked = resource?.IsBlocked ?? false,
+                BlockedFrom = resource?.BlockedFrom,
+                BlockedUntil = resource?.BlockedUntil,
+                BlockReason = resource?.BlockReason,
+
+                // Location Details
+                LocationName = resource?.Location?.Name,
+                LocationAddress = resource?.Location?.Address,
+                City = resource?.Location?.City,
+                BuildingName = resource?.Building?.Name,
+                FloorName = resource?.Floor?.FloorName
             };
         }
     }
