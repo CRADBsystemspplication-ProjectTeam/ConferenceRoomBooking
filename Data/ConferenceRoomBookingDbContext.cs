@@ -100,9 +100,9 @@ namespace ConferenceRoomBooking.Data
                     .HasForeignKey(b => b.ResourceId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.HasIndex(b => b.Date);
+                entity.HasIndex(b => b.StartTime);
                 entity.HasIndex(b => b.SessionStatus);
-                entity.HasIndex(b => new { b.ResourceId, b.Date, b.SessionStatus });
+                entity.HasIndex(b => new { b.ResourceId, b.StartTime, b.SessionStatus });
             });
 
             // Event
@@ -126,34 +126,35 @@ namespace ConferenceRoomBooking.Data
                 entity.HasIndex(e => e.Date);
             });
 
-            // EventRSVP - JSON columns
+            // EventRSVP
             modelBuilder.Entity<EventRSVP>(entity =>
             {
-                var listComparer = new Microsoft.EntityFrameworkCore.ChangeTracking.ValueComparer<List<int>>(
-                    (c1, c2) => c1.SequenceEqual(c2),
-                    c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                    c => c.ToList());
+                entity.HasOne(r => r.Event)
+                    .WithMany(e => e.RSVPs)
+                    .HasForeignKey(r => r.EventId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                entity.Property(e => e.InterestedUserIds)
-                    .HasConversion(
-                        v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions)null),
-                        v => System.Text.Json.JsonSerializer.Deserialize<List<int>>(v, (System.Text.Json.JsonSerializerOptions)null) ?? new List<int>()
-                    )
-                    .Metadata.SetValueComparer(listComparer);
+                entity.HasOne(r => r.User)
+                    .WithMany()
+                    .HasForeignKey(r => r.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
 
-                entity.Property(e => e.NotInterestedUserIds)
-                    .HasConversion(
-                        v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions)null),
-                        v => System.Text.Json.JsonSerializer.Deserialize<List<int>>(v, (System.Text.Json.JsonSerializerOptions)null) ?? new List<int>()
-                    )
-                    .Metadata.SetValueComparer(listComparer);
+                entity.HasIndex(r => new { r.EventId, r.UserId }).IsUnique();
+            });
 
-                entity.Property(e => e.MaybeUserIds)
-                    .HasConversion(
-                        v => System.Text.Json.JsonSerializer.Serialize(v, (System.Text.Json.JsonSerializerOptions)null),
-                        v => System.Text.Json.JsonSerializer.Deserialize<List<int>>(v, (System.Text.Json.JsonSerializerOptions)null) ?? new List<int>()
-                    )
-                    .Metadata.SetValueComparer(listComparer);
+            // Department
+            modelBuilder.Entity<Department>(entity =>
+            {
+                entity.HasIndex(d => d.DepartmentName).IsUnique();
+            });
+
+            // User-Department relationship
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasOne(u => u.Department)
+                    .WithMany(d => d.Users)
+                    .HasForeignKey(u => u.DepartmentId)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             // Notifications

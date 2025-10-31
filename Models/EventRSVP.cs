@@ -1,4 +1,5 @@
-﻿using ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models;
+﻿using ConferenceRoomBooking.Enum;
+using ConferenceRoomBooking.Models.ConferenceRoomAndDeskBookingApplication.Models;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -10,21 +11,21 @@ namespace ConferenceRoomBooking.Models
         public int RSVPId { get; set; }
 
         [Required]
-        [ForeignKey("Event")]
         public int EventId { get; set; }
 
-        // Store lists as JSON if needed, or as separate related entries (this is flexible)
         [Required]
-        public List<int>? InterestedUserIds { get; set; } = new();
+        public int UserId { get; set; }
 
         [Required]
-        public List<int>? NotInterestedUserIds { get; set; } = new();
+        public RsvpStatusType Status { get; set; }
 
-        [Required]
-        public List<int>? MaybeUserIds { get; set; } = new();
+        public DateTime ResponseDate { get; set; } = DateTime.UtcNow;
 
-        // Navigation property
+        // Navigation properties
+        [ForeignKey("EventId")]
         public Event? Event { get; set; }
-    }
 
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
+    }
 }

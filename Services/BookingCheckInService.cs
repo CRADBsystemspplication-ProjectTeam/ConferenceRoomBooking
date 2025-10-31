@@ -39,7 +39,7 @@ namespace ConferenceRoomBooking.Services
             // Send check-in confirmation email
             await SendCheckInNotificationAsync(booking);
             
-            return MapToResponseDto(checkIn);
+            return await MapToResponseDtoAsync(checkIn, booking);
         }
 
         public async Task<bool> CanCheckInAsync(int bookingId)
@@ -48,12 +48,11 @@ namespace ConferenceRoomBooking.Services
             if (booking == null) return false;
 
             var now = DateTime.UtcNow;
-            var bookingDateTime = booking.Date.Add(booking.StartTime);
             var checkInWindow = TimeSpan.FromMinutes(15);
 
             return booking.SessionStatus == SessionStatus.Reserved &&
-                   now >= bookingDateTime.Subtract(checkInWindow) &&
-                   now <= booking.Date.Add(booking.EndTime);
+                   now >= booking.StartTime.Subtract(checkInWindow) &&
+                   now <= booking.EndTime;
         }
 
         public async Task<BookingCheckInResponseDto> CheckOutAsync(int bookingId, int userId)
@@ -70,7 +69,7 @@ namespace ConferenceRoomBooking.Services
             // Send check-out confirmation email
             await SendCheckOutNotificationAsync(booking);
             
-            return MapToResponseDto(checkIn);
+            return await MapToResponseDtoAsync(checkIn, booking);
         }
 
         public async Task<bool> CanCheckOutAsync(int bookingId)
@@ -82,7 +81,10 @@ namespace ConferenceRoomBooking.Services
         public async Task<BookingCheckInResponseDto?> GetCheckInStatusAsync(int bookingId)
         {
             var checkIn = await _checkInRepository.GetCheckInByBookingIdAsync(bookingId);
-            return checkIn == null ? null : MapToResponseDto(checkIn);
+            if (checkIn == null) return null;
+            
+            var booking = await _bookingRepository.GetByIdAsync(bookingId);
+            return await MapToResponseDtoAsync(checkIn, booking);
         }
 
         public async Task<IEnumerable<BookingCheckInResponseDto>> GetUserCheckInHistoryAsync(int userId)
@@ -95,7 +97,7 @@ namespace ConferenceRoomBooking.Services
                 var checkIn = await _checkInRepository.GetCheckInByBookingIdAsync(booking.BookingId);
                 if (checkIn != null)
                 {
-                    checkIns.Add(MapToResponseDto(checkIn));
+                    checkIns.Add(await MapToResponseDtoAsync(checkIn, booking));
                 }
             }
 
@@ -185,8 +187,20 @@ Thank you for using our booking system!";
             });
         }
 
-        private static BookingCheckInResponseDto MapToResponseDto(BookingCheckIn checkIn)
+        private async Task<BookingCheckInResponseDto> MapToResponseDtoAsync(BookingCheckIn checkIn, Booking? booking = null)
         {
+            if (booking == null)
+                booking = await _bookingRepository.GetByIdAsync(checkIn.BookingId);
+            
+            var resource = await _resourceRepository.GetByIdAsync(booking.ResourceId);
+            
+            // Get resource name from Room or Desk
+            string resourceName = "";
+            if (booking.ResourceType == ResourceType.Room && resource?.Room != null)
+                resourceName = resource.Room.RoomName;
+            else if (booking.ResourceType == ResourceType.Desk && resource?.Desk != null)
+                resourceName = resource.Desk.DeskName;
+            
             return new BookingCheckInResponseDto
             {
                 Id = checkIn.Id,
@@ -194,7 +208,11 @@ Thank you for using our booking system!";
                 CheckInTime = checkIn.CheckInTime,
                 CheckOutTime = checkIn.CheckOutTime,
                 IsCheckedIn = checkIn.IsCheckedIn,
-                IsCheckedOut = checkIn.IsCheckedOut
+                IsCheckedOut = checkIn.IsCheckedOut,
+                IsNoShow = booking.SessionStatus == SessionStatus.NoShow,
+                UserName = $"{booking.User?.FirstName} {booking.User?.LastName}".Trim(),
+                ResourceName = resourceName,
+                Duration = checkIn.ActualDuration
             };
         }
     }

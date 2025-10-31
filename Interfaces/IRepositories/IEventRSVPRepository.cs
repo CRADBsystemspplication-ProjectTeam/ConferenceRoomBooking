@@ -1,4 +1,5 @@
-﻿using ConferenceRoomBooking.Models;
+﻿using ConferenceRoomBooking.Enum;
+using ConferenceRoomBooking.Models;
 
 namespace ConferenceRoomBooking.Interfaces.IRepositories
 {
@@ -10,15 +11,7 @@ namespace ConferenceRoomBooking.Interfaces.IRepositories
 
         Task<IEnumerable<EventRSVP>> GetRsvpsByUserAsync(int userId);
 
-        Task<bool> AddUserRsvpAsync(EventRSVP rsvp);
-
-        Task<bool> UpdateUserRsvpAsync(int eventId, int userId, string status);
-
-        Task<int> GetInterestedCountAsync(int eventId);
-
-        Task<int> GetNotInterestedCountAsync(int eventId);
-
-        Task<int> GetMaybeCountAsync(int eventId);
+        Task<int> GetCountByStatusAsync(int eventId, RsvpStatusType status);
     }
 
 }

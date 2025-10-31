@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace ConferenceRoomBooking.Models
 {
@@ -11,11 +11,16 @@ namespace ConferenceRoomBooking.Models
         [StringLength(100)]
         public string DepartmentName { get; set; }
 
+        [StringLength(500)]
+        public string? Description { get; set; }
+
         public bool IsActive { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
         // Navigation Properties
-        public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<User>? Users { get; set; }
     }
 }

@@ -1,5 +1,6 @@
-using ConferenceRoomBooking.DTOs.Booking;
+  using ConferenceRoomBooking.DTOs.Booking;
 using ConferenceRoomBooking.Enum;
+using ConferenceRoomBooking.Helpers;
 using ConferenceRoomBooking.Interfaces.IRepositories;
 using ConferenceRoomBooking.Interfaces.IServices;
 using ConferenceRoomBooking.Models;
@@ -25,25 +26,28 @@ namespace ConferenceRoomBooking.Services
             _notificationService = notificationService;
         }
 
-        public async Task<BookingResponseDto> BookResource(CreateBookingDto bookingDto)
+        public async Task<BookingResponseDto> BookResource(CreateBookingDto bookingDto, int userId)
         {
             var resource = await _resourceRepository.GetByIdAsync(bookingDto.ResourceId);
             if (resource == null) throw new ArgumentException("Resource not found");
 
+            // Convert times to UTC for storage (handles different DateTime kinds)
+            var startTimeUtc = DateTimeHelper.ConvertToUtcForStorage(bookingDto.StartTime);
+            var endTimeUtc = DateTimeHelper.ConvertToUtcForStorage(bookingDto.EndTime);
+
             var isAvailable = await _bookingRepository.IsResourceAvailableAsync(
-                bookingDto.ResourceId, bookingDto.Date, bookingDto.StartTime, bookingDto.EndTime);
+                bookingDto.ResourceId, startTimeUtc, endTimeUtc);
             
             if (!isAvailable) throw new InvalidOperationException("Resource is not available for the selected time");
 
             var booking = new Booking
             {
-                UserId = bookingDto.UserId,
+                UserId = userId,
                 ResourceId = bookingDto.ResourceId,
                 ResourceType = bookingDto.ResourceType,
                 MeetingName = bookingDto.MeetingName,
-                Date = bookingDto.Date,
-                StartTime = bookingDto.StartTime,
-                EndTime = bookingDto.EndTime,
+                StartTime = startTimeUtc,
+                EndTime = endTimeUtc,
                 ParticipantCount = bookingDto.ParticipantCount,
                 SessionStatus = SessionStatus.Reserved
             };
@@ -94,7 +98,7 @@ namespace ConferenceRoomBooking.Services
         {
             var bookings = await _bookingRepository.GetBookingsByResourceIdAsync(resourceId);
             if (date.HasValue)
-                bookings = bookings.Where(b => b.Date.Date == date.Value.Date);
+                bookings = bookings.Where(b => DateTimeHelper.ConvertUtcToIst(b.StartTime).Date == date.Value.Date);
             
             var tasks = bookings.Select(MapToResponseDto);
             return await Task.WhenAll(tasks);
@@ -115,26 +119,31 @@ namespace ConferenceRoomBooking.Services
             return result;
         }
 
-        public async Task<bool> ValidateBookingAvailabilityAsync(int resourceId, DateTime date, TimeSpan startTime, TimeSpan endTime, int? excludeBookingId = null)
+        public async Task<bool> ValidateBookingAvailabilityAsync(int resourceId, DateTime startTime, DateTime endTime, int? excludeBookingId = null)
         {
-            return await _bookingRepository.IsResourceAvailableAsync(resourceId, date, startTime, endTime, excludeBookingId);
+            var startTimeUtc = DateTimeHelper.ConvertToUtcForStorage(startTime);
+            var endTimeUtc = DateTimeHelper.ConvertToUtcForStorage(endTime);
+            return await _bookingRepository.IsResourceAvailableAsync(resourceId, startTimeUtc, endTimeUtc, excludeBookingId);
         }
 
-        public async Task<AlternativeTimeSlotsDto> GetAlternativeTimeSlotsAsync(int resourceId, DateTime date, TimeSpan startTime, TimeSpan endTime)
+        public async Task<AlternativeTimeSlotsDto> GetAlternativeTimeSlotsAsync(int resourceId, DateTime date, DateTime startTime, DateTime endTime)
         {
             var bookings = await _bookingRepository.GetBookingsByResourceIdAsync(resourceId);
-            var dayBookings = bookings.Where(b => b.Date.Date == date.Date && b.SessionStatus != SessionStatus.Cancelled)
+            var dayBookings = bookings.Where(b => DateTimeHelper.ConvertUtcToIst(b.StartTime).Date == date.Date && b.SessionStatus != SessionStatus.Cancelled)
                                     .OrderBy(b => b.StartTime).ToList();
 
             var alternatives = new List<TimeSlotDto>();
-            var workingHours = TimeSpan.FromHours(9);
-            var workingEnd = TimeSpan.FromHours(18);
+            var workingStart = date.Date.AddHours(9); // 9 AM IST
+            var workingEnd = date.Date.AddHours(18);   // 6 PM IST
             var duration = endTime - startTime;
 
-            for (var time = workingHours; time.Add(duration) <= workingEnd; time = time.Add(TimeSpan.FromMinutes(30)))
+            for (var time = workingStart; time.Add(duration) <= workingEnd; time = time.AddMinutes(30))
             {
                 var slotEnd = time.Add(duration);
-                var hasConflict = dayBookings.Any(b => b.StartTime < slotEnd && b.EndTime > time);
+                var timeUtc = DateTimeHelper.ConvertToUtcForStorage(time);
+                var slotEndUtc = DateTimeHelper.ConvertToUtcForStorage(slotEnd);
+                
+                var hasConflict = dayBookings.Any(b => b.StartTime < slotEndUtc && b.EndTime > timeUtc);
                 
                 if (!hasConflict)
                 {
@@ -164,10 +173,11 @@ namespace ConferenceRoomBooking.Services
         public async Task<IEnumerable<BookingResponseDto>> GetUpcomingBookingsAsync(int userId, int hours = 24)
         {
             var bookings = await _bookingRepository.GetBookingsByUserIdAsync(userId);
+            var currentIst = DateTimeHelper.GetCurrentIstTime();
             var upcoming = bookings.Where(b => 
-                b.Date >= DateTime.UtcNow.Date && 
+                DateTimeHelper.ConvertUtcToIst(b.StartTime) >= currentIst && 
                 b.SessionStatus == SessionStatus.Reserved &&
-                b.Date.Add(b.StartTime) <= DateTime.UtcNow.AddHours(hours));
+                DateTimeHelper.ConvertUtcToIst(b.StartTime) <= currentIst.AddHours(hours));
             
             var tasks = upcoming.Select(MapToResponseDto);
             return await Task.WhenAll(tasks);
@@ -176,7 +186,8 @@ namespace ConferenceRoomBooking.Services
         public async Task<IEnumerable<BookingResponseDto>> GetBookingHistoryAsync(int userId)
         {
             var bookings = await _bookingRepository.GetBookingsByUserIdAsync(userId);
-            var history = bookings.Where(b => b.Date < DateTime.UtcNow.Date || 
+            var currentIst = DateTimeHelper.GetCurrentIstTime();
+            var history = bookings.Where(b => DateTimeHelper.ConvertUtcToIst(b.EndTime) < currentIst || 
                                             b.SessionStatus == SessionStatus.Completed ||
                                             b.SessionStatus == SessionStatus.Cancelled);
             
@@ -184,13 +195,15 @@ namespace ConferenceRoomBooking.Services
             return await Task.WhenAll(tasks);
         }
 
-        public async Task<bool> HasConflictingBookingsAsync(int userId, DateTime date, TimeSpan startTime, TimeSpan endTime)
+        public async Task<bool> HasConflictingBookingsAsync(int userId, DateTime startTime, DateTime endTime)
         {
             var userBookings = await _bookingRepository.GetBookingsByUserIdAsync(userId);
+            var startTimeUtc = DateTimeHelper.ConvertToUtcForStorage(startTime);
+            var endTimeUtc = DateTimeHelper.ConvertToUtcForStorage(endTime);
+            
             return userBookings.Any(b => 
-                b.Date.Date == date.Date &&
                 b.SessionStatus != SessionStatus.Cancelled &&
-                b.StartTime < endTime && b.EndTime > startTime);
+                b.StartTime < endTimeUtc && b.EndTime > startTimeUtc);
         }
 
         private async Task<BookingResponseDto> MapToResponseDto(Booking booking)
@@ -207,9 +220,8 @@ namespace ConferenceRoomBooking.Services
                 ResourceName = resource?.Name ?? "Unknown",
                 ResourceType = booking.ResourceType,
                 MeetingName = booking.MeetingName,
-                Date = booking.Date,
-                StartTime = booking.StartTime,
-                EndTime = booking.EndTime,
+                StartTime = DateTimeHelper.ConvertUtcToIst(booking.StartTime),
+                EndTime = DateTimeHelper.ConvertUtcToIst(booking.EndTime),
                 ParticipantCount = booking.ParticipantCount,
                 SessionStatus = booking.SessionStatus,
                 CancellationReason = booking.CancellationReason,
@@ -221,13 +233,15 @@ namespace ConferenceRoomBooking.Services
         {
             var resource = await _resourceRepository.GetByIdAsync(booking.ResourceId);
             var subject = "Booking Confirmation";
+            var startTimeIst = DateTimeHelper.ConvertUtcToIst(booking.StartTime);
+            var endTimeIst = DateTimeHelper.ConvertUtcToIst(booking.EndTime);
             var body = $@"Your booking has been confirmed!
 
 Details:
 Meeting: {booking.MeetingName}
 Resource: {resource?.Name}
-Date: {booking.Date:yyyy-MM-dd}
-Time: {booking.StartTime} - {booking.EndTime}
+Date: {startTimeIst:yyyy-MM-dd}
+Time: {startTimeIst:HH:mm} - {endTimeIst:HH:mm} IST
 Participants: {booking.ParticipantCount}
 
 Please check-in on time.";
@@ -245,13 +259,15 @@ Please check-in on time.";
         {
             var resource = await _resourceRepository.GetByIdAsync(booking.ResourceId);
             var subject = "Booking Cancelled";
+            var startTimeIst = DateTimeHelper.ConvertUtcToIst(booking.StartTime);
+            var endTimeIst = DateTimeHelper.ConvertUtcToIst(booking.EndTime);
             var body = $@"Your booking has been cancelled.
 
 Details:
 Meeting: {booking.MeetingName}
 Resource: {resource?.Name}
-Date: {booking.Date:yyyy-MM-dd}
-Time: {booking.StartTime} - {booking.EndTime}
+Date: {startTimeIst:yyyy-MM-dd}
+Time: {startTimeIst:HH:mm} - {endTimeIst:HH:mm} IST
 Reason: {reason}";
             
             await _notificationService.SendNotificationAsync(new DTOs.UserNotification.SendNotificationDto

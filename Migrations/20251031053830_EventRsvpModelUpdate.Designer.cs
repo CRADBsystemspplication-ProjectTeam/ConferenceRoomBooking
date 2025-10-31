@@ -4,6 +4,7 @@ using ConferenceRoomBooking.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConferenceRoomBooking.Migrations
 {
     [DbContext(typeof(ConferenceRoomBookingDbContext))]
-    partial class ConferenceRoomBookingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251031053830_EventRsvpModelUpdate")]
+    partial class EventRsvpModelUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,8 +46,11 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<bool>("CheckOutReminder")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("EndTime")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
+
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time");
 
                     b.Property<bool>("EntryReminderSent")
                         .HasColumnType("bit");
@@ -72,21 +78,21 @@ namespace ConferenceRoomBooking.Migrations
                     b.Property<int>("SessionStatus")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("StartTime")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("BookingId");
 
-                    b.HasIndex("SessionStatus");
+                    b.HasIndex("Date");
 
-                    b.HasIndex("StartTime");
+                    b.HasIndex("SessionStatus");
 
                     b.HasIndex("UserId");
 
-                    b.HasIndex("ResourceId", "StartTime", "SessionStatus");
+                    b.HasIndex("ResourceId", "Date", "SessionStatus");
 
                     b.ToTable("Bookings");
                 });

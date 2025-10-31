@@ -1,7 +1,10 @@
+using ConferenceRoomBooking.DTOs.EventRSVP;
+using ConferenceRoomBooking.Enum;
 using ConferenceRoomBooking.Interfaces.IServices;
 using ConferenceRoomBooking.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ConferenceRoomBooking.Controllers
 {
@@ -17,18 +20,22 @@ namespace ConferenceRoomBooking.Controllers
             _eventRSVPService = eventRSVPService;
         }
 
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdClaim, out var userId) ? userId : 0;
+        }
+
         [HttpPost("rsvp")]
-        public async Task<IActionResult> AddUserRsvp([FromQuery] int eventId, [FromQuery] int userId, [FromQuery] string status)
+        public async Task<IActionResult> AddUserRsvp([FromBody] CreateRsvpDto dto)
         {
             try
             {
-                if (eventId <= 0 || userId <= 0)
-                    return BadRequest(new { message = "Invalid event ID or user ID" });
+                var userId = GetCurrentUserId();
+                if (userId <= 0)
+                    return Unauthorized(new { message = "Invalid user" });
 
-                if (string.IsNullOrWhiteSpace(status))
-                    return BadRequest(new { message = "Status is required" });
-
-                var result = await _eventRSVPService.AddUserRsvpAsync(eventId, userId, status);
+                var result = await _eventRSVPService.AddUserRsvpAsync(dto.EventId, userId, dto.Status.ToString());
                 return result ? Ok(new { message = "RSVP added successfully" }) : BadRequest(new { message = "Failed to add RSVP" });
             }
             catch (Exception ex)
@@ -38,17 +45,15 @@ namespace ConferenceRoomBooking.Controllers
         }
 
         [HttpPut("rsvp")]
-        public async Task<IActionResult> UpdateUserRsvp([FromQuery] int eventId, [FromQuery] int userId, [FromQuery] string status)
+        public async Task<IActionResult> UpdateUserRsvp([FromBody] CreateRsvpDto dto)
         {
             try
             {
-                if (eventId <= 0 || userId <= 0)
-                    return BadRequest(new { message = "Invalid event ID or user ID" });
+                var userId = GetCurrentUserId();
+                if (userId <= 0)
+                    return Unauthorized(new { message = "Invalid user" });
 
-                if (string.IsNullOrWhiteSpace(status))
-                    return BadRequest(new { message = "Status is required" });
-
-                var result = await _eventRSVPService.UpdateUserRsvpAsync(eventId, userId, status);
+                var result = await _eventRSVPService.UpdateUserRsvpAsync(dto.EventId, userId, dto.Status.ToString());
                 return result ? Ok(new { message = "RSVP updated successfully" }) : BadRequest(new { message = "Failed to update RSVP" });
             }
             catch (Exception ex)
@@ -57,16 +62,28 @@ namespace ConferenceRoomBooking.Controllers
             }
         }
 
-        [HttpGet("user-rsvp")]
-        public async Task<IActionResult> GetUserRsvp([FromQuery] int eventId, [FromQuery] int userId)
+        [HttpGet("user-rsvp/{eventId}")]
+        public async Task<IActionResult> GetUserRsvp(int eventId)
         {
             try
             {
-                if (eventId <= 0 || userId <= 0)
-                    return BadRequest(new { message = "Invalid event ID or user ID" });
+                var userId = GetCurrentUserId();
+                if (userId <= 0)
+                    return Unauthorized(new { message = "Invalid user" });
 
                 var rsvp = await _eventRSVPService.GetUserRsvpAsync(eventId, userId);
-                return rsvp == null ? NotFound(new { message = "RSVP not found" }) : Ok(rsvp);
+                if (rsvp == null)
+                    return NotFound(new { message = "RSVP not found" });
+
+                var response = new RsvpResponseDto
+                {
+                    RSVPId = rsvp.RSVPId,
+                    EventId = rsvp.EventId,
+                    UserId = rsvp.UserId,
+                    Status = rsvp.Status,
+                    ResponseDate = rsvp.ResponseDate
+                };
+                return Ok(response);
             }
             catch (Exception ex)
             {

@@ -3,6 +3,7 @@ using ConferenceRoomBooking.Enum;
 using ConferenceRoomBooking.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ConferenceRoomBooking.Controllers
 {
@@ -18,11 +19,32 @@ namespace ConferenceRoomBooking.Controllers
             _bookingService = bookingService;
         }
 
+        private int GetCurrentUserId()
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return int.TryParse(userIdClaim, out var userId) ? userId : 0;
+        }
+
         [HttpPost]
         public async Task<IActionResult> CreateBooking([FromBody] CreateBookingDto dto)
         {
-            var result = await _bookingService.BookResource(dto);
-            return Ok(result);
+            try
+            {
+                var userId = GetCurrentUserId();
+                if (userId <= 0)
+                    return Unauthorized(new { message = "Invalid user" });
+
+                var result = await _bookingService.BookResource(dto, userId);
+                return Ok(result);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message });
+            }
         }
 
         [HttpGet("{id}")]
@@ -36,6 +58,17 @@ namespace ConferenceRoomBooking.Controllers
         public async Task<IActionResult> GetAllBookings()
         {
             var result = await _bookingService.GetAllBookingsAsync();
+            return Ok(result);
+        }
+
+        [HttpGet("my-bookings")]
+        public async Task<IActionResult> GetMyBookings()
+        {
+            var userId = GetCurrentUserId();
+            if (userId <= 0)
+                return Unauthorized(new { message = "Invalid user" });
+
+            var result = await _bookingService.GetUserBookingsAsync(userId);
             return Ok(result);
         }
 
@@ -68,14 +101,18 @@ namespace ConferenceRoomBooking.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> CancelBooking(int id, [FromBody] string reason, [FromQuery] int userId)
+        public async Task<IActionResult> CancelBooking(int id, [FromBody] string reason)
         {
+            var userId = GetCurrentUserId();
+            if (userId <= 0)
+                return Unauthorized(new { message = "Invalid user" });
+
             var result = await _bookingService.CancelBookingAsync(id, userId, reason);
             return result ? Ok(new { message = "Booking cancelled successfully" }) : BadRequest("Failed to cancel booking");
         }
 
         [HttpGet("alternative-slots")]
-        public async Task<IActionResult> GetAlternativeSlots([FromQuery] int resourceId, [FromQuery] DateTime date, [FromQuery] TimeSpan startTime, [FromQuery] TimeSpan endTime)
+        public async Task<IActionResult> GetAlternativeSlots([FromQuery] int resourceId, [FromQuery] DateTime date, [FromQuery] DateTime startTime, [FromQuery] DateTime endTime)
         {
             var result = await _bookingService.GetAlternativeTimeSlotsAsync(resourceId, date, startTime, endTime);
             return Ok(result);

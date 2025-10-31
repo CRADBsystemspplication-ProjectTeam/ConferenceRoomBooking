@@ -72,10 +72,12 @@ namespace ConferenceRoomBooking.Repositories
 
         public async Task<IEnumerable<Resource>> GetAvailableResourcesAsync(ResourceType resourceType, int locationId, DateTime date, TimeSpan startTime, TimeSpan endTime)
         {
+            var startDateTime = date.Date.Add(startTime);
+            var endDateTime = date.Date.Add(endTime);
+            
             var bookedResourceIds = await _context.Bookings
-                .Where(b => b.Date.Date == date.Date &&
-                           b.SessionStatus != SessionStatus.Cancelled &&
-                           b.StartTime < endTime && b.EndTime > startTime)
+                .Where(b => b.SessionStatus != SessionStatus.Cancelled &&
+                           b.StartTime < endDateTime && b.EndTime > startDateTime)
                 .Select(b => b.ResourceId)
                 .ToListAsync();
 
@@ -126,11 +128,13 @@ namespace ConferenceRoomBooking.Repositories
             if (resource == null || resource.IsUnderMaintenance || resource.IsBlocked)
                 return false;
 
+            var startDateTime = date.Date.Add(startTime);
+            var endDateTime = date.Date.Add(endTime);
+
             var query = _context.Bookings
                 .Where(b => b.ResourceId == resourceId &&
-                           b.Date.Date == date.Date &&
                            b.SessionStatus != SessionStatus.Cancelled &&
-                           b.StartTime < endTime && b.EndTime > startTime);
+                           b.StartTime < endDateTime && b.EndTime > startDateTime);
 
             if (excludeBookingId.HasValue)
                 query = query.Where(b => b.BookingId != excludeBookingId.Value);

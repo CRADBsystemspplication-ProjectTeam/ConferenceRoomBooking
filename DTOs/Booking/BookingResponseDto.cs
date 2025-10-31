@@ -18,13 +18,9 @@ namespace ConferenceRoomBooking.DTOs.Booking
 
         public ResourceType ResourceType { get; set; }
 
-        public DateTime Date { get; set; }
+        public DateTime StartTime { get; set; }
 
-        public DateTime BookingDate { get; set; }
-
-        public TimeSpan StartTime { get; set; }
-
-        public TimeSpan EndTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         public SessionStatus Status { get; set; }
 

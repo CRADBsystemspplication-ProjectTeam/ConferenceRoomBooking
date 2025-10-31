@@ -30,6 +30,7 @@ namespace ConferenceRoomBooking.Services
             services.AddScoped<IBookingRepository, BookingRepository>();
             services.AddScoped<IEventRepository, EventRepository>();
             services.AddScoped<IEventRSVPRepository, EventRSVPRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
             services.AddScoped<IBookingCheckInRepository, BookingCheckInRepository>();
             services.AddScoped<IUserNotificationRepository, UserNotificationRepository>();
             services.AddScoped<IUserOtpVerificationRepository, UserOtpVerificationRepository>();
@@ -49,6 +50,8 @@ namespace ConferenceRoomBooking.Services
             services.AddScoped<IUserNotificationService, UserNotificationService>();
             services.AddScoped<IBookingService, BookingService>();
             services.AddScoped<IBookingCheckInService, BookingCheckInService>();
+            services.AddScoped<IEventRSVPService, EventRSVPService>();
+            services.AddScoped<IDepartmentService, DepartmentService>();
 
             // Background Services
             services.AddHostedService<NotificationBackgroundService>();

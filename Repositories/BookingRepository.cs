@@ -9,6 +9,17 @@ namespace ConferenceRoomBooking.Repositories
     public class BookingRepository : BaseRepository<Booking>, IBookingRepository
     {
         public BookingRepository(ConferenceRoomBookingDbContext context) : base(context) { }
+        
+        public override async Task<Booking?> GetByIdAsync(int id)
+        {
+            return await _context.Bookings
+                .Include(b => b.User)
+                .Include(b => b.Resource)
+                    .ThenInclude(r => r.Room)
+                .Include(b => b.Resource)
+                    .ThenInclude(r => r.Desk)
+                .FirstOrDefaultAsync(b => b.BookingId == id);
+        }
 
         public async Task<IEnumerable<Booking>> GetBookingsByUserIdAsync(int userId)
         {
@@ -16,7 +27,7 @@ namespace ConferenceRoomBooking.Repositories
                 .Include(b => b.Resource)
                 .Include(b => b.User)
                 .Where(b => b.UserId == userId)
-                .OrderByDescending(b => b.Date)
+                .OrderByDescending(b => b.StartTime)
                 .ToListAsync();
         }
 
@@ -25,8 +36,7 @@ namespace ConferenceRoomBooking.Repositories
             return await _context.Bookings
                 .Include(b => b.User)
                 .Where(b => b.ResourceId == resourceId)
-                .OrderBy(b => b.Date)
-                .ThenBy(b => b.StartTime)
+                .OrderBy(b => b.StartTime)
                 .ToListAsync();
         }
 
@@ -44,17 +54,15 @@ namespace ConferenceRoomBooking.Repositories
             return await _context.Bookings
                 .Include(b => b.Resource)
                 .Include(b => b.User)
-                .Where(b => b.Date >= startDate && b.Date <= endDate)
-                .OrderBy(b => b.Date)
-                .ThenBy(b => b.StartTime)
+                .Where(b => b.StartTime >= startDate && b.StartTime <= endDate)
+                .OrderBy(b => b.StartTime)
                 .ToListAsync();
         }
 
-        public async Task<bool> IsResourceAvailableAsync(int resourceId, DateTime date, TimeSpan startTime, TimeSpan endTime, int? excludeBookingId = null)
+        public async Task<bool> IsResourceAvailableAsync(int resourceId, DateTime startTime, DateTime endTime, int? excludeBookingId = null)
         {
             var query = _context.Bookings
                 .Where(b => b.ResourceId == resourceId &&
-                           b.Date.Date == date.Date &&
                            b.SessionStatus != SessionStatus.Cancelled &&
                            ((b.StartTime < endTime && b.EndTime > startTime)));
 
@@ -84,8 +92,7 @@ namespace ConferenceRoomBooking.Repositories
                 .Include(b => b.Resource)
                 .Include(b => b.User)
                 .Where(b => b.SessionStatus == SessionStatus.Reserved &&
-                           b.Date.Date <= currentTime.Date &&
-                           b.EndTime <= currentTime.TimeOfDay)
+                           b.EndTime <= currentTime)
                 .ToListAsync();
         }
 
@@ -96,8 +103,7 @@ namespace ConferenceRoomBooking.Repositories
                 .Include(b => b.Resource)
                 .Include(b => b.User)
                 .Where(b => b.SessionStatus == SessionStatus.CheckedIn &&
-                           (b.Date.Date < currentTime.Date ||
-                            (b.Date.Date == currentTime.Date && b.EndTime < currentTime.TimeOfDay)))
+                           b.EndTime < currentTime)
                 .ToListAsync();
         }
     }

@@ -6,19 +6,13 @@ namespace ConferenceRoomBooking.DTOs.Booking
     public class CreateBookingDto
     {
         [Required]
-        public int UserId { get; set; }
-
-        [Required]
         public int ResourceId { get; set; }
 
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime StartTime { get; set; }
 
         [Required]
-        public TimeSpan StartTime { get; set; }
-
-        [Required]
-        public TimeSpan EndTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         [Required]
         public ResourceType ResourceType { get; set; }

@@ -50,8 +50,8 @@ namespace ConferenceRoomBooking.Repositories
 
         public async Task<int> GetEventParticipantCountAsync(int eventId)
         {
-            var rsvp = await _context.EventRSVPs.FirstOrDefaultAsync(r => r.EventId == eventId);
-            return rsvp?.InterestedUserIds?.Count ?? 0;
+            return await _context.EventRSVPs
+                .CountAsync(r => r.EventId == eventId && r.Status == ConferenceRoomBooking.Enum.RsvpStatusType.Yes);
         }
     }
 }

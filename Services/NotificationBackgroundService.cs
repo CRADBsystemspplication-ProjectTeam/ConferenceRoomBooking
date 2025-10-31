@@ -1,4 +1,5 @@
 using ConferenceRoomBooking.Enum;
+using ConferenceRoomBooking.Helpers;
 using ConferenceRoomBooking.Interfaces.IRepositories;
 using ConferenceRoomBooking.Interfaces.IServices;
 
@@ -66,23 +67,19 @@ namespace ConferenceRoomBooking.Services
             var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
-            var now = DateTime.UtcNow;
-            var reminderTime = now.AddMinutes(15); // 15 minutes before start
-
             var bookings = await bookingRepo.GetBookingsByStatusAsync(SessionStatus.Reserved);
             var upcomingBookings = bookings.Where(b => 
                 !b.EntryReminderSent &&
-                b.Date.Date == now.Date &&
-                b.Date.Add(b.StartTime) <= reminderTime &&
-                b.Date.Add(b.StartTime) > now);
+                DateTimeHelper.IsWithinNotificationWindow(b.StartTime, 15)); // 15 minutes before start
 
             foreach (var booking in upcomingBookings)
             {
                 var user = await userRepo.GetByIdAsync(booking.UserId);
                 if (user != null)
                 {
+                    var startTimeIst = DateTimeHelper.ConvertUtcToIst(booking.StartTime);
                     var subject = "Booking Reminder - Check-in Required";
-                    var body = $"Your booking '{booking.MeetingName}' starts at {booking.StartTime}. Please check-in within 15 minutes.";
+                    var body = $"Your booking '{booking.MeetingName}' starts at {startTimeIst:HH:mm} IST. Please check-in within 15 minutes.";
                     
                     await emailService.SendEmailAsync(user.Email, subject, body);
                     booking.EntryReminderSent = true;
@@ -98,23 +95,19 @@ namespace ConferenceRoomBooking.Services
             var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
-            var now = DateTime.UtcNow;
-            var reminderTime = now.AddMinutes(10); // 10 minutes before end
-
             var bookings = await bookingRepo.GetBookingsByStatusAsync(SessionStatus.CheckedIn);
             var endingBookings = bookings.Where(b => 
                 !b.ExitReminderSent &&
-                b.Date.Date == now.Date &&
-                b.Date.Add(b.EndTime) <= reminderTime &&
-                b.Date.Add(b.EndTime) > now);
+                DateTimeHelper.IsWithinNotificationWindow(b.EndTime, 10)); // 10 minutes before end
 
             foreach (var booking in endingBookings)
             {
                 var user = await userRepo.GetByIdAsync(booking.UserId);
                 if (user != null)
                 {
+                    var endTimeIst = DateTimeHelper.ConvertUtcToIst(booking.EndTime);
                     var subject = "Booking Ending Soon - Check-out Required";
-                    var body = $"Your booking '{booking.MeetingName}' ends at {booking.EndTime}. Please check-out before leaving.";
+                    var body = $"Your booking '{booking.MeetingName}' ends at {endTimeIst:HH:mm} IST. Please check-out before leaving.";
                     
                     await emailService.SendEmailAsync(user.Email, subject, body);
                     booking.ExitReminderSent = true;
@@ -130,10 +123,12 @@ namespace ConferenceRoomBooking.Services
             var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
-            var overdueBookings = await bookingRepo.GetOverdueBookingsAsync();
-            var notNotified = overdueBookings.Where(b => !b.OverdueRemainderSent);
+            var bookings = await bookingRepo.GetBookingsByStatusAsync(SessionStatus.CheckedIn);
+            var overdueBookings = bookings.Where(b => 
+                !b.OverdueRemainderSent &&
+                DateTimeHelper.IsBookingOverdue(b.EndTime));
 
-            foreach (var booking in notNotified)
+            foreach (var booking in overdueBookings)
             {
                 var user = await userRepo.GetByIdAsync(booking.UserId);
                 if (user != null)
@@ -155,19 +150,19 @@ namespace ConferenceRoomBooking.Services
             var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
             var emailService = scope.ServiceProvider.GetRequiredService<IEmailService>();
 
-            var now = DateTime.UtcNow;
+            var currentIst = DateTimeHelper.GetCurrentIstTime();
             var bookings = await bookingRepo.GetBookingsByStatusAsync(SessionStatus.Reserved);
             var missedBookings = bookings.Where(b => 
-                b.Date.Date <= now.Date &&
-                b.Date.Add(b.StartTime).AddMinutes(15) < now); // 15 minutes past start time
+                DateTimeHelper.ConvertUtcToIst(b.StartTime).AddMinutes(15) < currentIst); // 15 minutes past start time
 
             foreach (var booking in missedBookings)
             {
                 var user = await userRepo.GetByIdAsync(booking.UserId);
                 if (user != null)
                 {
+                    var startTimeIst = DateTimeHelper.ConvertUtcToIst(booking.StartTime);
                     var subject = "Missed Booking - No Check-in Detected";
-                    var body = $"You missed your booking '{booking.MeetingName}' scheduled at {booking.StartTime}. The booking has been marked as no-show.";
+                    var body = $"You missed your booking '{booking.MeetingName}' scheduled at {startTimeIst:HH:mm} IST. The booking has been marked as no-show.";
                     
                     await emailService.SendEmailAsync(user.Email, subject, body);
                 }

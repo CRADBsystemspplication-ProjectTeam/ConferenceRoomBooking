@@ -23,13 +23,10 @@ namespace ConferenceRoomBooking.Models
         public string MeetingName { get; set; }
 
         [Required]
-        public DateTime Date { get; set; }
+        public DateTime StartTime { get; set; }
 
         [Required]
-        public TimeSpan StartTime { get; set; }
-
-        [Required]
-        public TimeSpan EndTime { get; set; }
+        public DateTime EndTime { get; set; }
 
         public int? ParticipantCount { get; set; }
 

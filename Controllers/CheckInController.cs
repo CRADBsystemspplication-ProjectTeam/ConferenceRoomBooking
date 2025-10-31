@@ -1,6 +1,7 @@
 using ConferenceRoomBooking.Interfaces.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace ConferenceRoomBooking.Controllers
 {
@@ -17,10 +18,11 @@ namespace ConferenceRoomBooking.Controllers
         }
 
         [HttpPost("checkin/{bookingId}")]
-        public async Task<IActionResult> CheckIn(int bookingId, [FromQuery] int userId)
+        public async Task<IActionResult> CheckIn(int bookingId)
         {
             try
             {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
                 var result = await _checkInService.CheckInAsync(bookingId, userId);
                 return Ok(result);
             }
@@ -31,10 +33,11 @@ namespace ConferenceRoomBooking.Controllers
         }
 
         [HttpPost("checkout/{bookingId}")]
-        public async Task<IActionResult> CheckOut(int bookingId, [FromQuery] int userId)
+        public async Task<IActionResult> CheckOut(int bookingId)
         {
             try
             {
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
                 var result = await _checkInService.CheckOutAsync(bookingId, userId);
                 return Ok(result);
             }
@@ -65,16 +68,18 @@ namespace ConferenceRoomBooking.Controllers
             return result == null ? NotFound() : Ok(result);
         }
 
-        [HttpGet("history/{userId}")]
-        public async Task<IActionResult> GetCheckInHistory(int userId)
+        [HttpGet("history")]
+        public async Task<IActionResult> GetCheckInHistory()
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
             var result = await _checkInService.GetUserCheckInHistoryAsync(userId);
             return Ok(result);
         }
 
-        [HttpGet("statistics/{userId}")]
-        public async Task<IActionResult> GetStatistics(int userId)
+        [HttpGet("statistics")]
+        public async Task<IActionResult> GetStatistics()
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "0");
             var result = await _checkInService.GetCheckInStatisticsAsync(userId);
             return Ok(result);
         }

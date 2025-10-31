@@ -9,7 +9,7 @@ namespace ConferenceRoomBooking.Interfaces.IRepositories
         Task<IEnumerable<Booking>> GetBookingsByResourceIdAsync(int resourceId);
         Task<IEnumerable<Booking>> GetBookingsByStatusAsync(SessionStatus status);
         Task<IEnumerable<Booking>> GetBookingsByDateRangeAsync(DateTime startDate, DateTime endDate);
-        Task<bool> IsResourceAvailableAsync(int resourceId, DateTime date, TimeSpan startTime, TimeSpan endTime, int? excludeBookingId = null);
+        Task<bool> IsResourceAvailableAsync(int resourceId, DateTime startTime, DateTime endTime, int? excludeBookingId = null);
         Task<bool> CancelBookingAsync(int bookingId, string cancellationReason);
         Task<IEnumerable<Booking>> GetNoShowBookingsAsync();
         Task<IEnumerable<Booking>> GetOverdueBookingsAsync();

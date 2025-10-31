@@ -96,10 +96,12 @@ namespace ConferenceRoomBooking.Repositories
 
         public async Task<IEnumerable<Room>> GetAvailableRoomsAsync(int locationId, DateTime date, TimeSpan startTime, TimeSpan endTime)
         {
+            var startDateTime = date.Date.Add(startTime);
+            var endDateTime = date.Date.Add(endTime);
+            
             var bookedResourceIds = await _context.Bookings
-                .Where(b => b.Date.Date == date.Date &&
-                           b.SessionStatus != SessionStatus.Cancelled &&
-                           b.StartTime < endTime && b.EndTime > startTime)
+                .Where(b => b.SessionStatus != SessionStatus.Cancelled &&
+                           b.StartTime < endDateTime && b.EndTime > startDateTime)
                 .Select(b => b.ResourceId)
                 .ToListAsync();
 
