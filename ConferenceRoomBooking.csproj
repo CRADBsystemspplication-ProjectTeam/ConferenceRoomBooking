@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -19,8 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="ConferenceRoomBooking.API\ConferenceRoomBooking.API.csproj" />
+    <ProjectReference Include="ConferenceRoomBooking.Business\ConferenceRoomBooking.Business.csproj" />
+    <ProjectReference Include="ConferenceRoomBooking.DataAccess\ConferenceRoomBooking.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
