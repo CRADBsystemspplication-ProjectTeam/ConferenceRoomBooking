@@ -19,7 +19,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="ConferenceRoomBooking.API\ConferenceRoomBooking.API.csproj" />
+    <ProjectReference Include="ConferenceRoomBooking.Business\ConferenceRoomBooking.Business.csproj" />
+    <ProjectReference Include="ConferenceRoomBooking.DataAccess\ConferenceRoomBooking.DataAccess.csproj" />
   </ItemGroup>
 
 </Project>
