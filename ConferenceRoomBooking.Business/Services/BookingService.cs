@@ -52,7 +52,7 @@ namespace ConferenceRoomBooking.Business.Services
             {
                 UserId = userId,
                 ResourceId = bookingDto.ResourceId,
-                ResourceType = bookingDto.ResourceType,
+                ResourceType = resource.ResourceType, // Fetch from Resource
                 MeetingName = bookingDto.MeetingName,
                 StartTime = startTimeUtc,
                 EndTime = endTimeUtc,

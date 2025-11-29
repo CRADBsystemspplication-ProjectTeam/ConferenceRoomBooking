@@ -15,9 +15,6 @@ namespace ConferenceRoomBooking.Business.DTOs.Booking
         public DateTime EndTime { get; set; }
 
         [Required]
-        public ResourceType ResourceType { get; set; }
-
-        [Required]
         public string MeetingName { get; set; }
 
         [Required]

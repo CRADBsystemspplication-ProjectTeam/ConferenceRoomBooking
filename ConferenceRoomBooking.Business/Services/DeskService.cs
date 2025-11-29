@@ -47,37 +47,57 @@ namespace ConferenceRoomBooking.Business.Services
         public async Task<IEnumerable<DeskResponseDto>> GetAllDesksAsync()
         {
             var desks = await _deskRepository.GetAllAsync();
-            var tasks = desks.Select(MapToResponseDto);
-            return await Task.WhenAll(tasks);
+            var result = new List<DeskResponseDto>();
+            foreach (var desk in desks)
+            {
+                result.Add(await MapToResponseDto(desk));
+            }
+            return result;
         }
 
         public async Task<IEnumerable<DeskResponseDto>> GetDesksByLocationAsync(int locationId)
         {
             var desks = await _deskRepository.GetDesksByLocationAsync(locationId);
-            var tasks = desks.Select(MapToResponseDto);
-            return await Task.WhenAll(tasks);
+            var result = new List<DeskResponseDto>();
+            foreach (var desk in desks)
+            {
+                result.Add(await MapToResponseDto(desk));
+            }
+            return result;
         }
 
         public async Task<IEnumerable<DeskResponseDto>> GetDesksByBuildingAsync(int buildingId)
         {
             var desks = await _deskRepository.GetDesksByBuildingAsync(buildingId);
-            var tasks = desks.Select(MapToResponseDto);
-            return await Task.WhenAll(tasks);
+            var result = new List<DeskResponseDto>();
+            foreach (var desk in desks)
+            {
+                result.Add(await MapToResponseDto(desk));
+            }
+            return result;
         }
 
         public async Task<IEnumerable<DeskResponseDto>> GetDesksByFloorAsync(int floorId)
         {
             var desks = await _deskRepository.GetDesksByFloorAsync(floorId);
-            var tasks = desks.Select(MapToResponseDto);
-            return await Task.WhenAll(tasks);
+            var result = new List<DeskResponseDto>();
+            foreach (var desk in desks)
+            {
+                result.Add(await MapToResponseDto(desk));
+            }
+            return result;
         }
 
         public async Task<IEnumerable<DeskResponseDto>> GetAvailableDesksAsync(DeskAvailabilityRequestDto requestDto)
         {
             var desks = await _deskRepository.GetAvailableDesksAsync(
                 requestDto.LocationId, requestDto.Date, requestDto.StartTime, requestDto.EndTime);
-            var tasks = desks.Select(MapToResponseDto);
-            return await Task.WhenAll(tasks);
+            var result = new List<DeskResponseDto>();
+            foreach (var desk in desks)
+            {
+                result.Add(await MapToResponseDto(desk));
+            }
+            return result;
         }
 
         public async Task<DeskResponseDto> UpdateDeskAsync(int deskId, UpdateDeskDto updateDeskDto)

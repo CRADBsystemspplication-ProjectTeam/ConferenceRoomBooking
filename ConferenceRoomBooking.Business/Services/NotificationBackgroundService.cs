@@ -26,6 +26,7 @@ namespace ConferenceRoomBooking.Business.Services
                 try
                 {
                     await ProcessPendingNotificationsAsync();
+                    await ProcessPendingBroadcastsAsync();
                     await SendEntryRemindersAsync();
                     await SendExitRemindersAsync();
                     await SendOverdueRemindersAsync();
@@ -181,6 +182,14 @@ namespace ConferenceRoomBooking.Business.Services
             var checkInService = scope.ServiceProvider.GetRequiredService<IBookingCheckInService>();
 
             await checkInService.ProcessOverdueCheckoutsAsync();
+        }
+
+        private async Task ProcessPendingBroadcastsAsync()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var broadcastService = scope.ServiceProvider.GetRequiredService<IBroadcastNotificationService>();
+
+            await broadcastService.ProcessPendingBroadcastsAsync();
         }
     }
 }

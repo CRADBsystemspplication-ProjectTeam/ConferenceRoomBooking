@@ -13,7 +13,8 @@ namespace ConferenceRoomBooking.DataAccess.Enum
         NoCheckOutReminder,
         EmployeeRegistration,
         MaintenanceAlert,
-        Welcome
+        Welcome,
+        General
     }
 
 }
