@@ -8,21 +8,41 @@ namespace ConferenceRoomBooking.Business.Services
     public class ResourceService : IResourceService
     {
         private readonly IResourceRepository _resourceRepository;
+        private readonly IFloorRepository _floorRepository;
+        private readonly IBuildingRepository _buildingRepository;
 
-        public ResourceService(IResourceRepository resourceRepository)
+        public ResourceService(IResourceRepository resourceRepository, IFloorRepository floorRepository, IBuildingRepository buildingRepository)
         {
             _resourceRepository = resourceRepository;
+            _floorRepository = floorRepository;
+            _buildingRepository = buildingRepository;
         }
 
         public async Task<ResourceResponseDto> CreateResourceAsync(CreateResourceDto createResourceDto)
         {
+            // Validate BuildingId exists and get LocationId from it
+            var building = await _buildingRepository.GetByIdAsync(createResourceDto.BuildingId);
+            if (building == null)
+                throw new ArgumentException($"Building with ID {createResourceDto.BuildingId} does not exist");
+
+            // Validate FloorId exists
+            var floor = await _floorRepository.GetByIdAsync(createResourceDto.FloorId);
+            if (floor == null)
+                throw new ArgumentException($"Floor with ID {createResourceDto.FloorId} does not exist");
+
             var resource = new Resource
             {
                 Name = createResourceDto.Name,
                 ResourceType = createResourceDto.ResourceType,
-                LocationId = createResourceDto.LocationId,
+                LocationId = building.LocationId, // Fetch from Building
                 BuildingId = createResourceDto.BuildingId,
                 FloorId = createResourceDto.FloorId,
+                IsUnderMaintenance = createResourceDto.IsUnderMaintenance,
+                IsBlocked = createResourceDto.BlockedFrom.HasValue,
+                IsActive = true,
+                BlockedFrom = createResourceDto.BlockedFrom,
+                BlockedUntil = createResourceDto.BlockedUntil,
+                BlockReason = createResourceDto.BlockReason,
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -163,9 +183,9 @@ namespace ConferenceRoomBooking.Business.Services
                 Name = resource.Name,
                 ResourceType = resource.ResourceType,
                 LocationId = resource.LocationId,
-                LocationAddress = resource.Location?.Address,  // Add this
-                City = resource.Location?.City,                // Add this
-                State = resource.Location?.State,              // Add this
+                LocationAddress = resource.Location?.Address,
+                City = resource.Location?.City,
+                State = resource.Location?.State,
                 Country = resource.Location?.Country,
                 LocationName = resource.Location?.Name,
                 BuildingId = resource.BuildingId,
@@ -174,6 +194,10 @@ namespace ConferenceRoomBooking.Business.Services
                 FloorName = resource.Floor?.FloorName,
                 IsUnderMaintenance = resource.IsUnderMaintenance,
                 IsBlocked = resource.IsBlocked,
+                IsActive = resource.IsActive,
+                BlockedFrom = resource.BlockedFrom,
+                BlockedUntil = resource.BlockedUntil,
+                BlockReason = resource.BlockReason,
                 CreatedAt = resource.CreatedAt,
                 UpdatedAt = resource.UpdatedAt
             };

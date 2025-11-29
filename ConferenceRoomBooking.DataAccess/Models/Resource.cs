@@ -1,3 +1,4 @@
+
 using ConferenceRoomBooking.DataAccess.Enum;
 using ConferenceRoomBooking.DataAccess.Models;
 using System.ComponentModel.DataAnnotations;
@@ -29,6 +30,7 @@ namespace ConferenceRoomBooking.DataAccess.Models
 
         public bool IsUnderMaintenance { get; set; } = false;
         public bool IsBlocked { get; set; } = false;
+        public bool IsActive { get; set; } = true;
 
         public DateTime? BlockedFrom { get; set; }
         public DateTime? BlockedUntil { get; set; }
